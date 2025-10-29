@@ -8,6 +8,45 @@ if has('clipboard')
 endif
 
 " =============================================================================
+" 플러그인 매니저: vim-plug (조건부)
+" - 목적: vim-plug가 설치된 경우에만 플러그인 선언 영역을 열기
+" - 경로: Neovim → stdpath('data')/plugged, Vim → ~/.vim/plugged
+" - 참고: 여기서는 매니저 초기화만 담당, 개별 플러그인 선언은 아래 별도 섹션 사용
+" =============================================================================
+if has('nvim')
+  let s:plug_autoload = stdpath('data') . '/site/autoload/plug.vim'
+  let s:plug_home    = stdpath('data') . '/plugged'
+else
+  let s:plug_autoload = expand('~/.vim/autoload/plug.vim')
+  let s:plug_home    = expand('~/.vim/plugged')
+endif
+
+if filereadable(s:plug_autoload)
+  call plug#begin(s:plug_home)
+
+  " =============================================================================
+  " 플러그인 선언: EasyMotion
+  " - 여기에서 개별 플러그인을 나열합니다. 필요 시 아래에 추가 Plug 라인을 더하세요.
+  " - 예시: Plug 'tpope/vim-commentary'
+  " =============================================================================
+  Plug 'easymotion/vim-easymotion'
+
+  " (선택) 다른 플러그인들을 여기에 추가
+  " Plug 'tpope/vim-surround'
+  " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+
+  call plug#end()
+
+  " =============================================================================
+  " EasyMotion 설정
+  " - 기본 매핑(<Leader><Leader> 접두어) 활성화, 스마트 케이스
+  " - 사용자가 사전에 값을 지정했으면 유지하고, 없을 때만 기본값 적용
+  " =============================================================================
+  let g:EasyMotion_do_mapping = get(g:, 'EasyMotion_do_mapping', 1)
+  let g:EasyMotion_smartcase  = get(g:, 'EasyMotion_smartcase', 1)
+endif
+
+" =============================================================================
 " 기능: 붙여넣기 시 CRLF(\r\n) → LF(\n) 정규화
 " - 배경: 윈도우에서 복사한 텍스트는 CRLF를 포함하여 유닉스 버퍼에서 ^M로 보일 수 있음
 " - 대상: Normal/Visual 모드 put(p/P/gp/gP), Insert 모드 <C-r>+/*/"
