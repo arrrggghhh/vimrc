@@ -32,7 +32,7 @@ if filereadable(s:plug_autoload)
   Plug 'easymotion/vim-easymotion'
 
   " (선택) 다른 플러그인들을 여기에 추가
-  " Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-surround'
   " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 
   call plug#end()
