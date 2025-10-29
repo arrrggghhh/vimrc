@@ -34,7 +34,7 @@ function! s:NormalizeRegCRLF(reg) abort
     return
   endif
   let l:type = getregtype(l:reg)
-  let l:norm = substitute(l:cont, '\\r\\ze\\n', '', 'g')
+  let l:norm = substitute(l:cont, '\r\ze\n', '', 'g')
   if l:norm isnot# l:cont
     call setreg(l:reg, l:norm, l:type)
   endif
