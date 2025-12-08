@@ -9,6 +9,36 @@ if has('clipboard')
 endif
 
 " =============================================================================
+" 검색: 결과 하이라이트
+" - 목적: 검색 시 일치 항목을 시각적으로 강조
+" =============================================================================
+set hlsearch
+
+" =============================================================================
+" 윈도우: F8 토글 분할
+" - 목적: 현재 창 최대화 토글 (단일 창일 땐 수직 분할 생성)
+" - 세부: 여러 창일 때 수직·수평 방향으로 모두 최대화, 다시 누르면 원래 레이아웃 복원
+" =============================================================================
+function! s:ToggleSplit() abort
+  if exists('t:toggle_split_restore')
+    execute t:toggle_split_restore
+    unlet t:toggle_split_restore
+    return
+  endif
+
+  if winnr('$') == 1
+    vsplit
+    return
+  endif
+
+  let t:toggle_split_restore = winrestcmd()
+  execute 'wincmd |'
+  execute 'wincmd _'
+endfunction
+
+nnoremap <silent> <F8> :call <SID>ToggleSplit()<CR>
+
+" =============================================================================
 " 플러그인 매니저: vim-plug (조건부)
 " - 목적: vim-plug가 설치된 경우에만 플러그인 선언 영역을 열기
 " - 경로: Neovim → stdpath('data')/plugged, Vim → ~/.vim/plugged
