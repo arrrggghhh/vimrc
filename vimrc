@@ -158,3 +158,14 @@ if has('clipboard')
   inoremap <expr> <C-r>* <SID>MapInsert('*')
   inoremap <expr> <C-r>" <SID>MapInsert('"')
 endif
+
+" =============================================================================
+" 편집: 새 줄에서 주석 문자 자동 삽입 비활성화
+" - 목적: o/O/Enter로 새 줄 생성 시 주석 리더가 자동 삽입되지 않도록 함
+" - 방식: filetype 플러그인이 formatoptions를 덮어쓰므로 autocmd로 override
+" - 위치: plug#end()(filetype plugin on) 이후에 등록해야 filetype 플러그인보다 늦게 실행됨
+" =============================================================================
+augroup disable_comment_continuation
+  autocmd!
+  autocmd FileType * setlocal formatoptions-=r formatoptions-=o
+augroup END
