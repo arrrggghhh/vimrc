@@ -1,8 +1,8 @@
 # Neovim Setup for Go Development
 
-새 Mac에서 이 설정을 적용하는 절차.
+## macOS
 
-## 1. 사전 준비
+### 1. 사전 준비
 
 Homebrew가 없으면 먼저 설치한다.
 
@@ -10,7 +10,7 @@ Homebrew가 없으면 먼저 설치한다.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## 2. 필수 도구 설치
+### 2. 필수 도구 설치
 
 ```sh
 brew install neovim go tree-sitter
@@ -31,7 +31,7 @@ echo $PATH | tr ':' '\n' | grep go
 # export PATH="$HOME/go/bin:$PATH"
 ```
 
-## 3. 설정 파일 배치
+### 3. 설정 파일 배치
 
 이 저장소를 클론하고 Neovim 설정 디렉토리에 심볼릭 링크를 건다.
 
@@ -42,7 +42,90 @@ ln -s ~/tools/vimrc/nvim ~/.config/nvim
 
 이미 `~/.config/nvim`이 있으면 백업하거나 삭제한 뒤 진행한다.
 
-## 4. 플러그인 설치
+## Ubuntu 서버
+
+### 1. 필수 패키지 설치
+
+```sh
+sudo apt update
+sudo apt install -y git curl build-essential
+```
+
+### 2. Neovim 설치
+
+Ubuntu 기본 저장소의 Neovim은 버전이 낮다. AppImage를 사용한다.
+
+```sh
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
+chmod u+x nvim-linux-x86_64.appimage
+sudo mv nvim-linux-x86_64.appimage /usr/local/bin/nvim
+```
+
+FUSE가 없는 서버라면 AppImage를 풀어서 설치한다.
+
+```sh
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
+chmod u+x nvim-linux-x86_64.appimage
+./nvim-linux-x86_64.appimage --appimage-extract
+sudo mv squashfs-root /opt/nvim
+sudo ln -s /opt/nvim/AppRun /usr/local/bin/nvim
+rm nvim-linux-x86_64.appimage
+```
+
+### 3. Go 설치
+
+```sh
+curl -LO https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go1.24.2.linux-amd64.tar.gz
+rm go1.24.2.linux-amd64.tar.gz
+```
+
+셸 설정(`~/.bashrc` 또는 `~/.zshrc`)에 PATH를 추가한다.
+
+```sh
+export PATH="/usr/local/go/bin:$HOME/go/bin:$PATH"
+```
+
+설정 반영 후 Go 도구를 설치한다.
+
+```sh
+source ~/.bashrc
+go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
+```
+
+### 4. tree-sitter CLI 설치
+
+npm이 있으면:
+
+```sh
+sudo apt install -y npm
+sudo npm install -g tree-sitter-cli
+```
+
+npm이 없으면 prebuilt 바이너리를 사용한다.
+
+```sh
+curl -LO https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz
+gunzip tree-sitter-linux-x64.gz
+chmod u+x tree-sitter-linux-x64
+sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter
+```
+
+### 5. 설정 파일 배치
+
+```sh
+git clone <repo-url> ~/tools/vimrc
+mkdir -p ~/.config
+ln -s ~/tools/vimrc/nvim ~/.config/nvim
+```
+
+이미 `~/.config/nvim`이 있으면 백업하거나 삭제한 뒤 진행한다.
+
+## 공통 (macOS / Ubuntu)
+
+### 플러그인 설치
 
 Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 플러그인을 설치한다.
 
@@ -69,7 +152,7 @@ nvim
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
 
-## 5. Mason으로 gopls 확인
+### Mason으로 gopls 확인
 
 Mason이 gopls를 자동 설치하도록 설정되어 있다 (`ensure_installed = { "gopls" }`).
 시스템에 이미 gopls가 있으면 그대로 사용되고, 없으면 Mason이 설치한다.
@@ -80,7 +163,7 @@ goimports는 자동 설치 대상이 아니므로, 2단계에서 `go install`로
 :MasonInstall goimports
 ```
 
-## 6. Treesitter 파서 확인
+### Treesitter 파서 확인
 
 tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자동 설치된다.
 수동으로 확인하려면:
@@ -91,7 +174,7 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 
 go, gomod, gosum, gotmpl, lua, query, vim, vimdoc 파서가 있어야 한다.
 
-## 7. 동작 확인
+### 동작 확인
 
 Go 프로젝트 디렉토리에서 `.go` 파일을 열어 다음을 확인한다.
 
