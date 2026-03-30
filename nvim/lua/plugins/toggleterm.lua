@@ -7,6 +7,8 @@ return {
     { "<leader>th", desc = "Horizontal terminal" },
     { "<leader>tv", desc = "Vertical terminal" },
     { "<leader>tg", desc = "Lazygit" },
+    { "<leader>ts", "<cmd>TermSelect<CR>", desc = "Select terminal" },
+    { "<leader>tt", desc = "Tab terminal (fullscreen)" },
   },
   opts = {
     open_mapping = [[<C-\>]],
@@ -34,9 +36,15 @@ return {
     })
 
     local map = vim.keymap.set
-    map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<CR>", { desc = "Float terminal" })
-    map("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>", { desc = "Horizontal terminal" })
-    map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { desc = "Vertical terminal" })
+    local function toggle(direction)
+      return function()
+        vim.cmd(vim.v.count1 .. "ToggleTerm direction=" .. direction)
+      end
+    end
+    map("n", "<leader>tf", toggle("float"), { desc = "Float terminal" })
+    map("n", "<leader>th", toggle("horizontal"), { desc = "Horizontal terminal" })
+    map("n", "<leader>tv", toggle("vertical"), { desc = "Vertical terminal" })
+    map("n", "<leader>tt", toggle("tab"), { desc = "Tab terminal (fullscreen)" })
     map("n", "<leader>tg", function() lazygit:toggle() end, { desc = "Lazygit" })
 
     vim.api.nvim_create_autocmd("TermOpen", {
