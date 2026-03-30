@@ -53,64 +53,55 @@ sudo apt install -y git curl build-essential
 
 ### 2. Neovim 설치
 
-Ubuntu 기본 저장소의 Neovim은 버전이 낮다. AppImage를 사용한다.
+Ubuntu 기본 저장소의 Neovim은 버전이 낮다. Pre-built 아카이브를 사용한다.
 
 ```sh
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
-chmod u+x nvim-linux-x86_64.appimage
-sudo mv nvim-linux-x86_64.appimage /usr/local/bin/nvim
-```
-
-FUSE가 없는 서버라면 AppImage를 풀어서 설치한다.
-
-```sh
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
-chmod u+x nvim-linux-x86_64.appimage
-./nvim-linux-x86_64.appimage --appimage-extract
-sudo mv squashfs-root /opt/nvim
-sudo ln -s /opt/nvim/AppRun /usr/local/bin/nvim
-rm nvim-linux-x86_64.appimage
-```
-
-### 3. Go 설치
-
-```sh
-curl -LO https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.24.2.linux-amd64.tar.gz
-rm go1.24.2.linux-amd64.tar.gz
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+sudo rm -rf /opt/nvim-linux-x86_64
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+rm nvim-linux-x86_64.tar.gz
 ```
 
 셸 설정(`~/.bashrc` 또는 `~/.zshrc`)에 PATH를 추가한다.
 
 ```sh
-export PATH="/usr/local/go/bin:$HOME/go/bin:$PATH"
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 ```
 
-설정 반영 후 Go 도구를 설치한다.
+### 3. Go 설치 (g 버전 매니저)
+
+[voidint/g](https://github.com/voidint/g)로 Go를 설치하고 버전을 관리한다.
 
 ```sh
+curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
 source ~/.bashrc
+```
+
+`g` 명령이 다른 프로그램에 연결되어 있으면 alias로 강제 지정한다.
+
+```sh
+alias g='~/.g/bin/g'
+```
+
+설치 가능한 stable 버전을 확인하고 원하는 버전을 설치한다.
+
+```sh
+g ls-remote stable
+g install 1.24.2
+```
+
+Go 도구를 설치한다.
+
+```sh
 go install golang.org/x/tools/gopls@latest
 go install golang.org/x/tools/cmd/goimports@latest
 ```
 
 ### 4. tree-sitter CLI 설치
 
-npm이 있으면:
-
 ```sh
 sudo apt install -y npm
 sudo npm install -g tree-sitter-cli
-```
-
-npm이 없으면 prebuilt 바이너리를 사용한다.
-
-```sh
-curl -LO https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz
-gunzip tree-sitter-linux-x64.gz
-chmod u+x tree-sitter-linux-x64
-sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter
 ```
 
 ### 5. 설정 파일 배치
