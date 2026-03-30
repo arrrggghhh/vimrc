@@ -4,21 +4,6 @@ return {
     enabled = false,
   },
   {
-    "akinsho/bufferline.nvim",
-    event = "VeryLazy",
-    opts = {
-      options = {
-        always_show_bufferline = false,
-        diagnostics = "nvim_lsp",
-        separator_style = "slant",
-      },
-    },
-    keys = {
-      { "<leader>bp", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
-      { "<leader>bn", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
-    },
-  },
-  {
     "mrjones2014/smart-splits.nvim",
     event = "VeryLazy",
     opts = {

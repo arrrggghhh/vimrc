@@ -124,7 +124,7 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 15개 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 14개 플러그인이 모두 로드되었는지 확인한다.
 
 | 플러그인 | 역할 |
 |---------|------|
@@ -138,7 +138,6 @@ nvim
 | hrsh7th/cmp-buffer | 버퍼 단어 자동완성 소스 |
 | nvim-treesitter/nvim-treesitter | 구문 하이라이팅/인덴트 |
 | nvim-treesitter/nvim-treesitter-context | 함수/구조체 이름 상단 고정 |
-| akinsho/bufferline.nvim | 버퍼 탭라인 |
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
@@ -343,17 +342,16 @@ VS Code에서 넘어오면 가장 헷갈리는 부분이다. Neovim은 보통 `�
 - 파일을 동시에 보고 싶으면 window를 나눈다.
 - 작업 맥락 자체를 분리하고 싶으면 tab을 만든다.
 
-### 버퍼 (탭)
-
-bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
+### 버퍼
 
 **버퍼 열기/닫기**
 
 ```
 :e foo.go       파일을 새 버퍼로 열기
 :enew           빈 버퍼 생성
-:bd             현재 버퍼 닫기 (탭에서 제거)
+:bd             현재 버퍼 닫기
 :bd foo.go      특정 버퍼 지정 닫기
+:ls             열린 버퍼 목록과 번호 확인
 ```
 
 **버퍼 이동**
@@ -361,8 +359,6 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 ```
 [b           이전 버퍼
 ]b           다음 버퍼
-<Space>bn    다음 버퍼 (오른쪽 탭)
-<Space>bp    이전 버퍼 (왼쪽 탭)
 ```
 
 **버퍼를 다른 창에서 열기** — 분할과 조합:
@@ -370,7 +366,6 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 ```
 :split #3       3번 버퍼를 수평 분할로 열기
 :vsplit #3      3번 버퍼를 수직 분할로 열기
-:ls             열린 버퍼 목록과 번호 확인
 ```
 
 ### 기타 유용한 LSP 기능
@@ -445,7 +440,9 @@ Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하�
 tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 다시 열 때 복원할
 수 있다. 세션은 작업 디렉토리별로 `~/.local/state/nvim/sessions/`에 저장된다.
 
-**자동 저장**: Neovim을 정상 종료하면 현재 디렉토리의 세션이 자동 저장된다.
+**저장**: 종료 시 버퍼가 2개 이상이면 `Save session?` 확인을 묻는다.
+Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
+버퍼가 1개 이하면 확인 없이 저장을 건너뛴다.
 버퍼 목록, 윈도우 레이아웃, 탭, 커서 위치가 포함된다.
 
 **복원하기**: 같은 디렉토리에서 Neovim을 열고 `<Space>sr`을 누르면 이전 상태가
@@ -454,7 +451,7 @@ tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 
 ```
 <Space>sr    현재 디렉토리의 세션 복원
 <Space>sl    마지막 세션 복원 (어떤 디렉토리였든)
-<Space>sd    이번 종료 시 자동 저장 중지
+<Space>ss    세션 수동 저장
 ```
 
 **제한사항**: 터미널(toggleterm) 상태는 복원되지 않는다. Neovim의 `mksession`
@@ -484,7 +481,6 @@ tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 
 | `<Space>ca` | Normal/Visual | 코드 액션 |
 | `[b` / `]b` | Normal | 이전/다음 버퍼 |
 | `[d` / `]d` | Normal | 이전/다음 진단 |
-| `<Space>bn` / `<Space>bp` | Normal | 다음/이전 버퍼 |
 | `Ctrl+h/j/k/l` | Normal | 분할 창 이동 |
 | `Alt+h/j/k/l` | Normal | 분할 창 리사이즈 |
 | `Ctrl+w =` | Normal | 창 크기 균등화 |
@@ -503,4 +499,4 @@ tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 
 | `Esc` | Terminal | Normal 모드 전환 |
 | `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
 | `<Space>sl` | Normal | 마지막 세션 복원 |
-| `<Space>sd` | Normal | 세션 자동 저장 중지 |
+| `<Space>ss` | Normal | 세션 수동 저장 |
