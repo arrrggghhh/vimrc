@@ -15,6 +15,53 @@ local function mason_binary(package, binary)
   return nil
 end
 
+local function next_window(source_win)
+  local total = vim.fn.winnr("$")
+  if total == 1 then
+    return nil
+  end
+
+  local current = vim.fn.win_id2win(source_win)
+  if current == 0 then
+    return nil
+  end
+
+  local target = current == total and 1 or current + 1
+  return vim.fn.win_getid(target)
+end
+
+local function open_lsp_item_in_other_window(item, source_buf, source_win, from, tagname)
+  if not vim.api.nvim_buf_is_valid(source_buf) then
+    return
+  end
+
+  local target_win = next_window(source_win)
+  if not target_win or not vim.api.nvim_win_is_valid(target_win) then
+    if vim.api.nvim_win_is_valid(source_win) then
+      vim.api.nvim_set_current_win(source_win)
+    end
+    vim.cmd("vsplit")
+    target_win = vim.api.nvim_get_current_win()
+  end
+
+  local target_buf = item.bufnr or vim.fn.bufadd(item.filename)
+  local source_cursor = { from[2], math.max(from[3] - 1, 0) }
+
+  vim.bo[target_buf].buflisted = true
+  vim.api.nvim_win_set_buf(target_win, source_buf)
+  vim.api.nvim_win_set_cursor(target_win, source_cursor)
+
+  vim.api.nvim_win_call(target_win, function()
+    vim.cmd("normal! m'")
+    vim.fn.settagstack(target_win, { items = { { tagname = tagname, from = from } } }, "t")
+    vim.api.nvim_win_set_buf(target_win, target_buf)
+    vim.api.nvim_win_set_cursor(target_win, { item.lnum, item.col - 1 })
+    vim.cmd("normal! zv")
+  end)
+
+  vim.api.nvim_set_current_win(target_win)
+end
+
 local function map_lsp_keys(bufnr)
   local map = function(mode, lhs, rhs, desc)
     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true })
@@ -28,12 +75,30 @@ local function map_lsp_keys(bufnr)
 
   local function jump_in_other_window(jump)
     return function()
-      if vim.fn.winnr("$") == 1 then
-        vim.cmd("vsplit")
-      else
-        vim.cmd("wincmd w")
-      end
-      jump()
+      local source_buf = vim.api.nvim_get_current_buf()
+      local source_win = vim.api.nvim_get_current_win()
+      local from = vim.fn.getpos(".")
+      local tagname = vim.fn.expand("<cword>")
+
+      from[1] = source_buf
+
+      jump({
+        on_list = function(options)
+          if #options.items == 1 then
+            open_lsp_item_in_other_window(
+              options.items[1],
+              source_buf,
+              source_win,
+              from,
+              tagname
+            )
+            return
+          end
+
+          vim.fn.setqflist({}, " ", options)
+          vim.cmd("botright copen")
+        end,
+      })
     end
   end
 
