@@ -142,6 +142,7 @@ nvim
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
+| akinsho/toggleterm.nvim | 통합 터미널 (float, horizontal, vertical) |
 
 ### Mason으로 gopls 확인
 
@@ -204,14 +205,14 @@ S                           treesitter 노드 단위로 선택 (함수, 블록 �
 **정의로 이동** — 함수, 변수, 타입 이름의 정의 위치로 이동한다.
 
 ```
-gd    definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성)
+gd    definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성, 여러 창이어도 현재 커서 기준으로 조회)
 gD    definition을 현재 창에서 열기
 ```
 
 **타입 정의로 이동** — 변수 위에서 그 변수의 타입 정의로 바로 이동한다.
 
 ```
-gy    type definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성)
+gy    type definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성, 여러 창이어도 현재 커서 기준으로 조회)
 gY    type definition을 현재 창에서 열기
 ```
 
@@ -308,6 +309,39 @@ Ctrl+w =    모든 창 크기를 같게
 :only       현재 창만 남기고 나머지 닫기    단축: Ctrl+w o
 ```
 
+### 버퍼 / 윈도우 / 탭 개념
+
+VS Code에서 넘어오면 가장 헷갈리는 부분이다. Neovim은 보통 `탭 > 윈도우 > 버퍼`
+구조로 이해하면 된다.
+
+- **버퍼(buffer)**: 열린 파일 내용 자체. 파일 탭에 가장 가까운 개념.
+- **윈도우(window)**: 화면에 보이는 칸. split 창 하나가 window 하나다.
+- **탭(tabpage)**: 여러 window 배치를 묶는 바깥 레이아웃.
+
+관계는 대략 이렇게 보면 된다.
+
+```text
+탭
+  ├─ 윈도우
+  │    └─ 버퍼
+  └─ 윈도우
+       └─ 버퍼
+```
+
+핵심 차이:
+
+- VS Code는 그룹 안에 파일 탭이 있는 느낌에 가깝다.
+- Neovim은 탭 안에 split window가 있고, 각 window가 어떤 buffer를 보여줄지 정한다.
+- 같은 buffer를 여러 window에서 동시에 열 수 있다.
+- window를 닫아도 buffer는 남을 수 있다.
+- buffer 번호는 모든 window와 tab에서 공유된다.
+
+실전에서는 이렇게 생각하면 편하다.
+
+- 파일 사이를 오가고 싶으면 buffer를 바꾼다.
+- 파일을 동시에 보고 싶으면 window를 나눈다.
+- 작업 맥락 자체를 분리하고 싶으면 tab을 만든다.
+
 ### 버퍼 (탭)
 
 bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
@@ -324,6 +358,8 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 **버퍼 이동**
 
 ```
+[b           이전 버퍼
+]b           다음 버퍼
 <Space>bn    다음 버퍼 (오른쪽 탭)
 <Space>bp    이전 버퍼 (왼쪽 탭)
 ```
@@ -347,6 +383,54 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 
 저장(`:w`) 시 goimports가 자동 실행되어 import 정리와 코드 포맷이 적용된다.
 
+### 통합 터미널 (toggleterm.nvim)
+
+VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 수 있다.
+
+**터미널 열기/닫기**
+
+```
+Ctrl+\        터미널 토글 (기본: float)
+<Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
+<Space>th     horizontal 터미널 (하단 분할)
+<Space>tv     vertical 터미널 (우측 분할)
+<Space>tg     lazygit (lazygit 설치 필요)
+```
+
+float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드를 보면서 실행 결과를
+확인할 때 적합하다. `go test ./...` 같은 명령은 horizontal이 편하다.
+
+**터미널 안에서 조작**
+
+```
+Esc           터미널 입력 모드 → Normal 모드 (창 이동, 스크롤 가능)
+i 또는 a      다시 터미널 입력 모드로 진입
+Ctrl+h/j/k/l  터미널에서 다른 창으로 이동
+Ctrl+\        터미널 닫기 (토글)
+```
+
+Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하거나 텍스트를 복사할 수
+있다.
+
+**여러 터미널 관리**
+
+번호를 붙여서 여러 터미널 인스턴스를 동시에 관리할 수 있다.
+
+```
+2<Ctrl+\>     2번 터미널 토글
+3<Ctrl+\>     3번 터미널 토글
+```
+
+번호별로 독립적인 셸 세션이 유지된다. 예를 들어 1번에서 `go run`을 실행하면서
+2번에서 `go test`를 돌릴 수 있다.
+
+**활용 예시**
+
+- `<Space>th`로 하단 터미널을 열고 `go run .` / `go test ./...` 실행
+- `<Space>tg`로 lazygit을 열어 커밋, 브랜치 관리
+- `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `Ctrl+\`로 닫기
+- 여러 터미널이 필요하면 `2<Ctrl+\>`, `3<Ctrl+\>`로 추가 생성
+
 ## 주요 키맵 요약
 
 | 키 | 모드 | 동작 |
@@ -363,6 +447,7 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 | `gY` | Normal | 타입 정의를 현재 창에서 열기 |
 | `<Space>rn` | Normal | 심볼 이름 변경 |
 | `<Space>ca` | Normal/Visual | 코드 액션 |
+| `[b` / `]b` | Normal | 이전/다음 버퍼 |
 | `[d` / `]d` | Normal | 이전/다음 진단 |
 | `<Space>bn` / `<Space>bp` | Normal | 다음/이전 버퍼 |
 | `Ctrl+h/j/k/l` | Normal | 분할 창 이동 |
@@ -373,3 +458,9 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 | `Ctrl+o` / `Ctrl+i` | Normal | 이전/다음 위치로 이동 |
 | `s` | Normal/Visual/Operator | flash 점프 (easymotion) |
 | `S` | Normal/Visual/Operator | flash treesitter 선택 |
+| `Ctrl+\` | Normal/Terminal | 터미널 토글 |
+| `<Space>tf` | Normal | float 터미널 |
+| `<Space>th` | Normal | horizontal 터미널 |
+| `<Space>tv` | Normal | vertical 터미널 |
+| `<Space>tg` | Normal | lazygit |
+| `Esc` | Terminal | Normal 모드 전환 |
