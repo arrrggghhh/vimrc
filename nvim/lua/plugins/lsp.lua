@@ -23,6 +23,14 @@ local function map_lsp_keys(bufnr)
   map("n", "gd", vim.lsp.buf.definition, "Go to definition")
   map("n", "gr", vim.lsp.buf.references, "List references")
   map("n", "K", vim.lsp.buf.hover, "Hover")
+  map("n", "gy", function()
+    if vim.fn.winnr("$") == 1 then
+      vim.cmd("vsplit")
+    else
+      vim.cmd("wincmd w")
+    end
+    vim.lsp.buf.type_definition()
+  end, "Type definition in split")
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
   map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
   map("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
