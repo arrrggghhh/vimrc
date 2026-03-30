@@ -1,5 +1,12 @@
 return {
   {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "VeryLazy",
+    opts = {
+      max_lines = 3,
+    },
+  },
+  {
     "nvim-treesitter/nvim-treesitter",
     lazy = false,
     build = ":TSUpdate",

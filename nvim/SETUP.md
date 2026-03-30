@@ -50,7 +50,7 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 13개 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 14개 플러그인이 모두 로드되었는지 확인한다.
 
 | 플러그인 | 역할 |
 |---------|------|
@@ -63,6 +63,7 @@ nvim
 | hrsh7th/cmp-nvim-lsp | LSP 자동완성 소스 |
 | hrsh7th/cmp-buffer | 버퍼 단어 자동완성 소스 |
 | nvim-treesitter/nvim-treesitter | 구문 하이라이팅/인덴트 |
+| nvim-treesitter/nvim-treesitter-context | 함수/구조체 이름 상단 고정 |
 | akinsho/bufferline.nvim | 버퍼 탭라인 |
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
@@ -103,6 +104,7 @@ nvim main.go
 - **자동완성**: Insert 모드에서 `.` 입력 시 완성 목록 표시
 - **Format on save**: `:w` 시 goimports가 자동 적용 (import 정리 + 포맷)
 - **Treesitter**: 구문 하이라이팅 적용 확인
+- **Sticky context**: 긴 함수/구조체 스크롤 시 이름이 상단에 고정 표시
 - **파일 탐색기**: `<Space>e`로 nvim-tree 열기/포커스, 트리 안에서 `q`로 닫기
 - **들여쓰기**: Go 파일에서 탭 기반 들여쓰기 (`noexpandtab`, `tabstop=4`)
 
