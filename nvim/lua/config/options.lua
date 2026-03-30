@@ -19,6 +19,7 @@ opt.splitbelow = true
 opt.splitright = true
 opt.tabstop = 2
 opt.termguicolors = true
+opt.autoread = true
 opt.undofile = true
 opt.updatetime = 250
 opt.wrap = false
