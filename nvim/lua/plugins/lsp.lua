@@ -20,17 +20,29 @@ local function map_lsp_keys(bufnr)
     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true })
   end
 
-  map("n", "gd", vim.lsp.buf.definition, "Go to definition")
+  local function jump_in_current_window(jump)
+    return function()
+      jump()
+    end
+  end
+
+  local function jump_in_other_window(jump)
+    return function()
+      if vim.fn.winnr("$") == 1 then
+        vim.cmd("vsplit")
+      else
+        vim.cmd("wincmd w")
+      end
+      jump()
+    end
+  end
+
+  map("n", "gd", jump_in_other_window(vim.lsp.buf.definition), "Go to definition in split")
+  map("n", "gD", jump_in_current_window(vim.lsp.buf.definition), "Go to definition")
   map("n", "gr", vim.lsp.buf.references, "List references")
   map("n", "K", vim.lsp.buf.hover, "Hover")
-  map("n", "gy", function()
-    if vim.fn.winnr("$") == 1 then
-      vim.cmd("vsplit")
-    else
-      vim.cmd("wincmd w")
-    end
-    vim.lsp.buf.type_definition()
-  end, "Type definition in split")
+  map("n", "gy", jump_in_other_window(vim.lsp.buf.type_definition), "Type definition in split")
+  map("n", "gY", jump_in_current_window(vim.lsp.buf.type_definition), "Type definition")
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
   map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
   map("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
