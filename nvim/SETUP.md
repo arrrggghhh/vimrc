@@ -124,7 +124,7 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 14개 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 15개 플러그인이 모두 로드되었는지 확인한다.
 
 | 플러그인 | 역할 |
 |---------|------|
@@ -143,6 +143,7 @@ nvim
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
 | akinsho/toggleterm.nvim | 통합 터미널 (float, horizontal, vertical) |
+| folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별) |
 
 ### Mason으로 gopls 확인
 
@@ -394,11 +395,14 @@ Ctrl+\        터미널 토글 (기본: float)
 <Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
 <Space>th     horizontal 터미널 (하단 분할)
 <Space>tv     vertical 터미널 (우측 분할)
+<Space>tt     tab 터미널 (전체화면)
 <Space>tg     lazygit (lazygit 설치 필요)
+<Space>ts     터미널 목록에서 선택
 ```
 
 float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드를 보면서 실행 결과를
-확인할 때 적합하다. `go test ./...` 같은 명령은 horizontal이 편하다.
+확인할 때 적합하다. tab은 터미널 작업에 집중하고 싶을 때 전체화면으로 쓴다.
+`go test ./...` 같은 명령은 horizontal이 편하다.
 
 **터미널 안에서 조작**
 
@@ -414,22 +418,53 @@ Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하�
 
 **여러 터미널 관리**
 
-번호를 붙여서 여러 터미널 인스턴스를 동시에 관리할 수 있다.
+번호를 붙여서 여러 터미널 인스턴스를 동시에 관리할 수 있다. 번호별로 독립적인
+셸 세션이 유지된다.
 
 ```
 2<Ctrl+\>     2번 터미널 토글
-3<Ctrl+\>     3번 터미널 토글
+2<Space>th    2번 터미널을 horizontal로 열기
+3<Space>tv    3번 터미널을 vertical로 열기
+<Space>ts     열린 터미널 목록에서 선택
 ```
 
-번호별로 독립적인 셸 세션이 유지된다. 예를 들어 1번에서 `go run`을 실행하면서
-2번에서 `go test`를 돌릴 수 있다.
+같은 방향(예: horizontal)의 터미널은 하나의 창을 공유한다. `2<Space>th` 후
+`3<Space>th`를 하면 같은 하단 창에서 3번 터미널로 교체된다. 동시에 나란히
+보여주는 것이 아니라, 한 창 안에서 번호를 전환하는 방식이다.
 
 **활용 예시**
 
 - `<Space>th`로 하단 터미널을 열고 `go run .` / `go test ./...` 실행
 - `<Space>tg`로 lazygit을 열어 커밋, 브랜치 관리
 - `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `Ctrl+\`로 닫기
-- 여러 터미널이 필요하면 `2<Ctrl+\>`, `3<Ctrl+\>`로 추가 생성
+- 여러 터미널이 필요하면 `2<Space>th`, `3<Space>th`로 번호 전환
+- `<Space>ts`로 터미널 목록을 보고 원하는 터미널 선택
+
+### 세션 관리 (persistence.nvim)
+
+tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 다시 열 때 복원할
+수 있다. 세션은 작업 디렉토리별로 `~/.local/state/nvim/sessions/`에 저장된다.
+
+**자동 저장**: Neovim을 정상 종료하면 현재 디렉토리의 세션이 자동 저장된다.
+버퍼 목록, 윈도우 레이아웃, 탭, 커서 위치가 포함된다.
+
+**복원하기**: 같은 디렉토리에서 Neovim을 열고 `<Space>sr`을 누르면 이전 상태가
+복원된다.
+
+```
+<Space>sr    현재 디렉토리의 세션 복원
+<Space>sl    마지막 세션 복원 (어떤 디렉토리였든)
+<Space>sd    이번 종료 시 자동 저장 중지
+```
+
+**제한사항**: 터미널(toggleterm) 상태는 복원되지 않는다. Neovim의 `mksession`
+자체 한계이므로 터미널은 복원 후 다시 열어야 한다.
+
+**활용 예시**
+
+- Go 프로젝트에서 여러 파일을 열고 split 배치한 상태로 작업 → 종료 → 다음 날
+  같은 디렉토리에서 `nvim` + `<Space>sr` → 어제 레이아웃 그대로 복원
+- 여러 프로젝트를 오가며 작업할 때 디렉토리별로 세션이 분리되어 편리
 
 ## 주요 키맵 요약
 
@@ -462,5 +497,10 @@ Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하�
 | `<Space>tf` | Normal | float 터미널 |
 | `<Space>th` | Normal | horizontal 터미널 |
 | `<Space>tv` | Normal | vertical 터미널 |
+| `<Space>tt` | Normal | tab 터미널 (전체화면) |
 | `<Space>tg` | Normal | lazygit |
+| `<Space>ts` | Normal | 터미널 목록 선택 |
 | `Esc` | Terminal | Normal 모드 전환 |
+| `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
+| `<Space>sl` | Normal | 마지막 세션 복원 |
+| `<Space>sd` | Normal | 세션 자동 저장 중지 |
