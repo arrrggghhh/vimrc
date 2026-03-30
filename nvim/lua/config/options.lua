@@ -4,6 +4,7 @@ vim.g.maplocalleader = "\\"
 local opt = vim.opt
 
 opt.clipboard = "unnamedplus"
+opt.completeopt = { "menu", "menuone", "noselect" }
 opt.expandtab = true
 opt.hidden = true
 opt.hlsearch = true
