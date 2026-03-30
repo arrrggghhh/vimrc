@@ -43,7 +43,7 @@ return {
       "NvimTreeToggle",
     },
     keys = {
-      { "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Toggle file tree" },
+      { "<leader>e", "<cmd>NvimTreeFocus<CR>", desc = "Focus file tree" },
       { "<leader>fe", "<cmd>NvimTreeFindFile<CR>", desc = "Reveal file in tree" },
     },
     opts = {

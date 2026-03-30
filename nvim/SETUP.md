@@ -66,7 +66,7 @@ nvim
 | akinsho/bufferline.nvim | 버퍼 탭라인 |
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
-| nvim-tree/nvim-web-devicons | 파일 아이콘 |
+| nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
 
 ## 5. Mason으로 gopls 확인
 
@@ -103,7 +103,7 @@ nvim main.go
 - **자동완성**: Insert 모드에서 `.` 입력 시 완성 목록 표시
 - **Format on save**: `:w` 시 goimports가 자동 적용 (import 정리 + 포맷)
 - **Treesitter**: 구문 하이라이팅 적용 확인
-- **파일 탐색기**: `<Space>e`로 nvim-tree 토글
+- **파일 탐색기**: `<Space>e`로 nvim-tree 열기/포커스, 트리 안에서 `q`로 닫기
 - **들여쓰기**: Go 파일에서 탭 기반 들여쓰기 (`noexpandtab`, `tabstop=4`)
 
 ## Go 소스코드 편집 가이드
@@ -172,7 +172,7 @@ Tab으로 다음 placeholder 위치로 이동할 수 있다.
 ### 파일 탐색기 (nvim-tree)
 
 ```
-<Space>e     파일 트리 토글 (열기/닫기)
+<Space>e     파일 트리 열기/포커스 (이미 열려 있으면 포커스만 이동)
 <Space>fe    현재 파일을 트리에서 찾아 하이라이트
 ```
 
@@ -184,7 +184,7 @@ a        새 파일 또는 디렉토리 생성 (이름 끝에 /를 붙이면 디
 r        이름 변경
 d        삭제
 x        상위 디렉토리 접기
-q        트리 닫기
+q        트리 닫기 (<Space>e로 다시 열기)
 ```
 
 ### 창 분할
@@ -274,7 +274,7 @@ bufferline이 열린 버퍼를 화면 상단에 탭처럼 표시한다.
 |----|------|------|
 | `<Space>w` | Normal | 저장 |
 | `<Space>q` | Normal | 종료 |
-| `<Space>e` | Normal | 파일 탐색기 토글 |
+| `<Space>e` | Normal | 파일 탐색기 열기/포커스 |
 | `<Space>fe` | Normal | 현재 파일 탐색기에서 찾기 |
 | `gd` | Normal | 정의로 이동 |
 | `gr` | Normal | 참조 목록 |
