@@ -160,6 +160,7 @@ nvim
 | folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별) |
 | stevearc/aerial.nvim | 코드/문서 아웃라인 (목차 사이드바) |
 | MeanderingProgrammer/render-markdown.nvim | 마크다운 버퍼 내 렌더링 |
+| kylechui/nvim-surround | 괄호/따옴표 등 감싸기 추가/변경/삭제 |
 
 ### Mason으로 gopls 확인
 
@@ -216,6 +217,52 @@ S                           treesitter 노드 단위로 선택 (함수, 블록 �
 ```
 
 `d`, `c`, `y` 같은 operator와 조합할 수도 있다. 예: `ds{검색}{라벨}`로 커서부터 해당 위치까지 삭제.
+
+### 감싸기 편집 (nvim-surround)
+
+괄호, 따옴표, 태그 등을 추가, 변경, 삭제한다. Vim의 vim-surround와 동일한
+키바인딩을 사용한다.
+
+**추가** — `ys{motion}{char}`
+
+```
+ysiw"       단어를 "로 감싸기          hello → "hello"
+ysiw)       단어를 ()로 감싸기         hello → (hello)
+ysiw}       단어를 {}로 감싸기         hello → {hello}
+ys2aw"      단어 2개를 "로 감싸기
+yss"        줄 전체를 "로 감싸기
+```
+
+여는 괄호(`(`, `{`, `[`)를 쓰면 안쪽에 공백이 추가되고, 닫는 괄호(`)`, `}`,
+`]`)를 쓰면 공백 없이 감싼다.
+
+```
+ysiw(       hello → ( hello )
+ysiw)       hello → (hello)
+```
+
+**변경** — `cs{old}{new}`
+
+```
+cs"'        "hello" → 'hello'
+cs)]        (hello) → [hello]
+cs"<div>    "hello" → <div>hello</div>
+```
+
+**삭제** — `ds{char}`
+
+```
+ds"         "hello" → hello
+ds)         (hello) → hello
+dst         <div>hello</div> → hello
+```
+
+**Visual 모드** — 선택 영역을 감싸기
+
+```
+S"          Visual 모드에서 선택한 텍스트를 "로 감싸기
+S)          Visual 모드에서 선택한 텍스트를 ()로 감싸기
+```
 
 ### 코드 탐색
 
@@ -608,6 +655,10 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>m` | Normal | 마크다운 렌더링 토글 |
 | `s` | Normal/Visual/Operator | flash 점프 (easymotion) |
 | `S` | Normal/Visual/Operator | flash treesitter 선택 |
+| `ys{motion}{char}` | Normal | 감싸기 추가 (surround) |
+| `cs{old}{new}` | Normal | 감싸기 변경 |
+| `ds{char}` | Normal | 감싸기 삭제 |
+| `S{char}` | Visual | 선택 영역 감싸기 |
 | `Ctrl+\` | Normal/Terminal | 터미널 토글 |
 | `<Space>tf` | Normal | float 터미널 |
 | `<Space>th` | Normal | horizontal 터미널 |
