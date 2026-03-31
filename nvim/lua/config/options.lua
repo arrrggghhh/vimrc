@@ -22,7 +22,8 @@ opt.termguicolors = true
 opt.autoread = true
 opt.undofile = true
 opt.updatetime = 250
-opt.wrap = false
+opt.wrap = true
+opt.linebreak = true
 
 local undodir = vim.fn.stdpath("state") .. "/undo"
 if vim.fn.isdirectory(undodir) == 0 then

@@ -11,3 +11,7 @@ map("n", "<leader>h", "<C-w>h", { desc = "Focus left window" })
 map("n", "<leader>j", "<C-w>j", { desc = "Focus lower window" })
 map("n", "<leader>k", "<C-w>k", { desc = "Focus upper window" })
 map("n", "<leader>l", "<C-w>l", { desc = "Focus right window" })
+map("n", "<A-z>", function()
+  vim.wo.wrap = not vim.wo.wrap
+  vim.wo.linebreak = vim.wo.wrap
+end, { desc = "Toggle word wrap", silent = true })

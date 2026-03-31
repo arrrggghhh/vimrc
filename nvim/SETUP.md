@@ -667,6 +667,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>tg` | Normal | lazygit |
 | `<Space>ts` | Normal | 터미널 목록 선택 |
 | `Esc` | Terminal | Normal 모드 전환 |
+| `Alt+z` | Normal | 워드 랩 토글 |
 | `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
 | `<Space>sl` | Normal | 마지막 세션 복원 |
 | `<Space>ss` | Normal | 세션 수동 저장 |
