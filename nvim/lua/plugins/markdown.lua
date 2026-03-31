@@ -12,7 +12,20 @@ return {
       "AerialPrev",
     },
     keys = {
-      { "<leader>o", "<cmd>AerialToggle<CR>", desc = "Toggle outline" },
+      {
+        "<leader>o",
+        function()
+          local aerial = require("aerial")
+          if not aerial.is_open() then
+            aerial.open()
+          elseif vim.bo.filetype == "aerial" then
+            aerial.close()
+          else
+            aerial.focus()
+          end
+        end,
+        desc = "Toggle outline",
+      },
     },
     opts = {
       layout = {
