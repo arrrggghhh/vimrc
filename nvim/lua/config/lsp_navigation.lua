@@ -1,8 +1,22 @@
 local M = {}
 
+local sidebar_filetypes = {
+  NvimTree = true,
+  aerial = true,
+  qf = true,
+  help = true,
+  toggleterm = true,
+}
+
+local function is_sidebar(win)
+  local buf = vim.api.nvim_win_get_buf(win)
+  local ft = vim.bo[buf].filetype
+  return sidebar_filetypes[ft] or false
+end
+
 local function next_window(source_win)
   local total = vim.fn.winnr("$")
-  if total == 1 then
+  if total <= 1 then
     return nil
   end
 
@@ -11,8 +25,15 @@ local function next_window(source_win)
     return nil
   end
 
-  local target = current == total and 1 or current + 1
-  return vim.fn.win_getid(target)
+  for i = 1, total - 1 do
+    local nr = (current - 1 + i) % total + 1
+    local win = vim.fn.win_getid(nr)
+    if win ~= source_win and not is_sidebar(win) then
+      return win
+    end
+  end
+
+  return nil
 end
 
 local function prepare_other_window(source_buf, source_win, source_cursor)
