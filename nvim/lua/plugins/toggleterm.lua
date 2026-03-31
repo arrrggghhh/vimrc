@@ -33,6 +33,9 @@ return {
       direction = "float",
       hidden = true,
       float_opts = { border = "curved" },
+      on_open = function(term)
+        vim.keymap.del("t", "<Esc>", { buffer = term.bufnr })
+      end,
     })
 
     local map = vim.keymap.set
