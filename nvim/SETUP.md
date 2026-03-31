@@ -25,7 +25,7 @@ brew install --cask font-d2coding-nerd-font
 ### 3. 필수 도구 설치
 
 ```sh
-brew install neovim go tree-sitter
+brew install neovim go tree-sitter ripgrep
 ```
 
 Go 도구는 go install로 설치한다.
@@ -136,7 +136,7 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 14개 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 17개 플러그인이 모두 로드되었는지 확인한다.
 
 | 플러그인 | 역할 |
 |---------|------|
@@ -148,6 +148,9 @@ nvim
 | hrsh7th/nvim-cmp | 자동완성 엔진 |
 | hrsh7th/cmp-nvim-lsp | LSP 자동완성 소스 |
 | hrsh7th/cmp-buffer | 버퍼 단어 자동완성 소스 |
+| nvim-telescope/telescope.nvim | fuzzy finder (파일, 심볼, 텍스트 검색) |
+| nvim-telescope/telescope-fzf-native.nvim | telescope용 fzf 정렬 알고리즘 (C) |
+| nvim-lua/plenary.nvim | telescope 의존 라이브러리 |
 | nvim-treesitter/nvim-treesitter | 구문 하이라이팅/인덴트 |
 | nvim-treesitter/nvim-treesitter-context | 함수/구조체 이름 상단 고정 |
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
@@ -277,6 +280,48 @@ r        이름 변경
 d        삭제
 x        상위 디렉토리 접기
 q        트리 닫기 (<Space>e로 다시 열기)
+```
+
+### 검색 (telescope.nvim)
+
+VS Code의 Command Palette(`Cmd+P`)처럼 파일명, 심볼, 텍스트를 fuzzy 검색한다.
+검색창에서 입력하면 실시간으로 결과가 필터링된다.
+
+**파일 검색** — 프로젝트 내 파일을 이름으로 찾는다.
+
+```
+<Space>ff    파일명 fuzzy 검색 (VS Code Cmd+P와 동일)
+```
+
+**텍스트 검색** — 파일 내용을 ripgrep으로 실시간 검색한다.
+
+```
+<Space>fg    파일 내용 검색 (VS Code Cmd+Shift+F와 동일, ripgrep 필요)
+```
+
+**심볼 검색** — LSP를 통해 함수, 타입, 변수 등 심볼을 이름으로 검색한다.
+
+```
+<Space>fs    현재 파일의 심볼 목록 (VS Code Cmd+Shift+O와 동일)
+<Space>fS    워크스페이스 전체 심볼 검색 (VS Code Cmd+T와 동일)
+```
+
+**기타 검색**
+
+```
+<Space>fb    열린 버퍼 목록에서 선택
+<Space>fd    진단(에러/경고) 목록
+<Space>fr    마지막 검색을 이어서 진행
+```
+
+**검색창 안에서 조작**
+
+```
+Ctrl+n / Ctrl+p    다음/이전 항목 선택
+Enter              선택한 항목 열기
+Ctrl+x             선택한 항목을 수평 분할로 열기
+Ctrl+v             선택한 항목을 수직 분할로 열기
+Esc                검색 닫기
 ```
 
 ### 창 분할
@@ -499,6 +544,13 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 | `Ctrl+w s` / `Ctrl+w v` | Normal | 수평/수직 분할 |
 | `Ctrl+w c` | Normal | 현재 창 닫기 |
 | `Ctrl+o` / `Ctrl+i` | Normal | 이전/다음 위치로 이동 |
+| `<Space>ff` | Normal | 파일명 fuzzy 검색 |
+| `<Space>fg` | Normal | 파일 내용 검색 (live grep) |
+| `<Space>fb` | Normal | 열린 버퍼 목록 |
+| `<Space>fs` | Normal | 현재 파일 심볼 검색 |
+| `<Space>fS` | Normal | 워크스페이스 심볼 검색 |
+| `<Space>fd` | Normal | 진단 목록 |
+| `<Space>fr` | Normal | 마지막 검색 재개 |
 | `s` | Normal/Visual/Operator | flash 점프 (easymotion) |
 | `S` | Normal/Visual/Operator | flash treesitter 선택 |
 | `Ctrl+\` | Normal/Terminal | 터미널 토글 |
