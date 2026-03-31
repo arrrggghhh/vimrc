@@ -1,7 +1,7 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
+    branch = "master",
     dependencies = {
       "nvim-lua/plenary.nvim",
       {
@@ -15,7 +15,7 @@ return {
       { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
       { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>fs", "<cmd>Telescope lsp_document_symbols<CR>", desc = "Document symbols" },
-      { "<leader>fS", "<cmd>Telescope lsp_workspace_symbols<CR>", desc = "Workspace symbols" },
+      { "<leader>fS", "<cmd>Telescope lsp_dynamic_workspace_symbols<CR>", desc = "Workspace symbols" },
       { "<leader>fd", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
       { "<leader>fr", "<cmd>Telescope resume<CR>", desc = "Resume last search" },
     },
