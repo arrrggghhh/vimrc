@@ -10,7 +10,19 @@ Homebrew가 없으면 먼저 설치한다.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### 2. 필수 도구 설치
+### 2. Nerd Font 설치
+
+플러그인 아이콘 표시에 Nerd Font가 필요하다.
+
+```sh
+brew install --cask font-d2coding-nerd-font
+```
+
+또는 https://www.nerdfonts.com/font-downloads 에서 원하는 폰트를 다운로드한다.
+
+설치 후 터미널 앱의 폰트를 Nerd Font로 변경한다.
+
+### 3. 필수 도구 설치
 
 ```sh
 brew install neovim go tree-sitter
@@ -31,7 +43,7 @@ echo $PATH | tr ':' '\n' | grep go
 # export PATH="$HOME/go/bin:$PATH"
 ```
 
-### 3. 설정 파일 배치
+### 4. 설정 파일 배치
 
 이 저장소를 클론하고 Neovim 설정 디렉토리에 심볼릭 링크를 건다.
 
@@ -140,7 +152,7 @@ nvim
 | nvim-treesitter/nvim-treesitter-context | 함수/구조체 이름 상단 고정 |
 | mrjones2014/smart-splits.nvim | 분할 창 이동/리사이즈 |
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
-| nvim-tree/nvim-web-devicons | 파일 아이콘 (비활성화, Nerd Font 불필요) |
+| nvim-tree/nvim-web-devicons | 파일 아이콘 (Nerd Font 필요) |
 | akinsho/toggleterm.nvim | 통합 터미널 (float, horizontal, vertical) |
 | folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별) |
 
