@@ -1,7 +1,6 @@
 return {
   {
     "nvim-tree/nvim-web-devicons",
-    enabled = false,
   },
   {
     "mrjones2014/smart-splits.nvim",
@@ -39,16 +38,10 @@ return {
         group_empty = true,
         icons = {
           show = {
-            file = false,
-            folder = false,
+            file = true,
+            folder = true,
             folder_arrow = true,
-            git = false,
-          },
-          glyphs = {
-            folder = {
-              arrow_closed = ">",
-              arrow_open = "v",
-            },
+            git = true,
           },
         },
       },
