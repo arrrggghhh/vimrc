@@ -1,4 +1,4 @@
-# Neovim Setup for Go Development
+# Neovim Setup
 
 ## macOS
 
@@ -136,7 +136,7 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 17개 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 플러그인이 모두 로드되었는지 확인한다.
 
 | 플러그인 | 역할 |
 |---------|------|
@@ -158,6 +158,8 @@ nvim
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (Nerd Font 필요) |
 | akinsho/toggleterm.nvim | 통합 터미널 (float, horizontal, vertical) |
 | folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별) |
+| stevearc/aerial.nvim | 코드/문서 아웃라인 (목차 사이드바) |
+| MeanderingProgrammer/render-markdown.nvim | 마크다운 버퍼 내 렌더링 |
 
 ### Mason으로 gopls 확인
 
@@ -179,7 +181,7 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 :lua print(vim.inspect(require("nvim-treesitter").get_installed()))
 ```
 
-go, gomod, gosum, gotmpl, lua, query, vim, vimdoc 파서가 있어야 한다.
+go, gomod, gosum, gotmpl, lua, markdown, markdown_inline, query, vim, vimdoc 파서가 있어야 한다.
 
 ### 동작 확인
 
@@ -520,6 +522,43 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
   같은 디렉토리에서 `nvim` + `<Space>sr` → 어제 레이아웃 그대로 복원
 - 여러 프로젝트를 오가며 작업할 때 디렉토리별로 세션이 분리되어 편리
 
+## 마크다운 편집 가이드
+
+### 아웃라인 / 목차 (aerial.nvim)
+
+마크다운 파일의 헤딩을 트리 형태로 사이드바에 표시한다. 목차를 보면서 원하는
+섹션으로 빠르게 이동할 수 있다. Go 코드에서도 함수/타입 목록으로 사용 가능하다.
+
+```
+<Space>o     아웃라인 사이드바 토글
+```
+
+사이드바 안에서 조작:
+
+```
+Enter        선택한 항목으로 이동
+{  /  }      이전/다음 심볼로 이동
+[[ / ]]      이전/다음 상위 항목으로 이동
+o / za       트리 노드 접기/펼치기
+l  /  h      노드 열기/닫기
+zr / zm      전체 펼침 깊이 조정
+q            사이드바 닫기
+?            도움말
+```
+
+### 마크다운 렌더링 (render-markdown.nvim)
+
+버퍼 안에서 마크다운을 직접 렌더링한다. 헤딩 강조, 체크박스, 테이블 정렬,
+코드블록 하이라이트 등이 적용된다. 커서가 있는 줄은 원본 소스로 표시되어
+편집이 가능하고, 나머지 줄은 렌더링된 상태로 보인다.
+
+```
+<Space>m     렌더링 토글 (소스 모드 ↔ 렌더링 모드)
+```
+
+마크다운 파일을 열면 자동으로 렌더링이 활성화된다. `<Space>m`으로 끄면
+일반 소스 코드로 편집할 수 있고, 다시 누르면 렌더링 모드로 돌아간다.
+
 ## 주요 키맵 요약
 
 | 키 | 모드 | 동작 |
@@ -551,6 +590,8 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 | `<Space>fS` | Normal | 워크스페이스 심볼 검색 |
 | `<Space>fd` | Normal | 진단 목록 |
 | `<Space>fr` | Normal | 마지막 검색 재개 |
+| `<Space>o` | Normal | 아웃라인 사이드바 토글 |
+| `<Space>m` | Normal | 마크다운 렌더링 토글 |
 | `s` | Normal/Visual/Operator | flash 점프 (easymotion) |
 | `S` | Normal/Visual/Operator | flash treesitter 선택 |
 | `Ctrl+\` | Normal/Terminal | 터미널 토글 |
