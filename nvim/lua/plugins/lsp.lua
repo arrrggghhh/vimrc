@@ -215,6 +215,7 @@ return {
             },
             completeUnimported = true,
             staticcheck = true,
+            symbolScope = "workspace",
             usePlaceholders = true,
           },
         },
