@@ -43,6 +43,9 @@ return {
       { "<leader>fe", "<cmd>NvimTreeFindFile<CR>", desc = "Reveal file in tree" },
     },
     opts = {
+      filters = {
+        custom = { "^\\.git$" },
+      },
       update_focused_file = {
         enable = true,
       },
