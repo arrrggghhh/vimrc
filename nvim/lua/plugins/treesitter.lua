@@ -17,6 +17,8 @@ return {
         "gosum",
         "gotmpl",
         "lua",
+        "markdown",
+        "markdown_inline",
         "query",
         "vim",
         "vimdoc",
@@ -27,6 +29,7 @@ return {
         "gosum",
         "gotmpl",
         "lua",
+        "markdown",
         "query",
         "vim",
       }
