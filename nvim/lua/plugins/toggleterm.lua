@@ -2,7 +2,7 @@ return {
   "akinsho/toggleterm.nvim",
   version = "*",
   keys = {
-    { "<C-\\>", desc = "Toggle terminal" },
+    { "<C-`>", desc = "Toggle terminal" },
     { "<leader>tf", desc = "Float terminal" },
     { "<leader>th", desc = "Horizontal terminal" },
     { "<leader>tv", desc = "Vertical terminal" },
@@ -11,7 +11,9 @@ return {
     { "<leader>tt", desc = "Tab terminal (fullscreen)" },
   },
   opts = {
-    open_mapping = [[<C-\>]],
+    open_mapping = [[<C-`>]],
+    insert_mappings = false,
+    terminal_mappings = false,
     direction = "float",
     float_opts = {
       border = "curved",
@@ -33,9 +35,6 @@ return {
       direction = "float",
       hidden = true,
       float_opts = { border = "curved" },
-      on_open = function(term)
-        vim.keymap.del("t", "<Esc>", { buffer = term.bufnr })
-      end,
     })
 
     local map = vim.keymap.set
@@ -54,7 +53,7 @@ return {
       pattern = "term://*toggleterm#*",
       callback = function()
         local topts = { buffer = 0 }
-        map("t", "<Esc>", [[<C-\><C-n>]], topts)
+        map("t", "<C-`>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], topts)
         map("t", "<C-h>", [[<C-\><C-n><C-w>h]], topts)
         map("t", "<C-j>", [[<C-\><C-n><C-w>j]], topts)
         map("t", "<C-k>", [[<C-\><C-n><C-w>k]], topts)
