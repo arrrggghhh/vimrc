@@ -492,7 +492,7 @@ VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 �
 **터미널 열기/닫기**
 
 ```
-Ctrl+\        터미널 토글 (기본: float)
+Ctrl+`        터미널 토글 (기본: float)
 <Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
 <Space>th     horizontal 터미널 (하단 분할)
 <Space>tv     vertical 터미널 (우측 분할)
@@ -508,14 +508,25 @@ float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드�
 **터미널 안에서 조작**
 
 ```
-Esc           터미널 입력 모드 → Normal 모드 (창 이동, 스크롤 가능)
+Ctrl+`        터미널 닫기 (토글)
+Ctrl+\ Ctrl+n 터미널 입력 모드 → Neovim Normal 모드
 i 또는 a      다시 터미널 입력 모드로 진입
 Ctrl+h/j/k/l  터미널에서 다른 창으로 이동
-Ctrl+\        터미널 닫기 (토글)
 ```
 
 Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하거나 텍스트를 복사할 수
 있다.
+
+터미널 안에서 다시 `vim` 또는 `nvim`을 실행한 경우에는 계층이 하나 더 생긴다.
+
+```
+바깥 Neovim 일반 버퍼         Esc                insert → normal
+toggleterm 터미널            Ctrl+\ Ctrl+n      terminal-mode → Neovim normal
+터미널 안의 vim/nvim         Esc                inner editor insert → normal
+```
+
+즉, 터미널 버퍼 자체를 빠져나올 때만 `Ctrl+\ Ctrl+n`이 필요하고, 터미널 안에서 실행한
+inner `vim`/`nvim`에서는 평소처럼 `Esc`를 쓴다.
 
 **여러 터미널 관리**
 
@@ -523,7 +534,6 @@ Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하�
 셸 세션이 유지된다.
 
 ```
-2<Ctrl+\>     2번 터미널 토글
 2<Space>th    2번 터미널을 horizontal로 열기
 3<Space>tv    3번 터미널을 vertical로 열기
 <Space>ts     열린 터미널 목록에서 선택
@@ -537,7 +547,7 @@ Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하�
 
 - `<Space>th`로 하단 터미널을 열고 `go run .` / `go test ./...` 실행
 - `<Space>tg`로 lazygit을 열어 커밋, 브랜치 관리
-- `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `Ctrl+\`로 닫기
+- `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `Ctrl+\``로 닫기
 - 여러 터미널이 필요하면 `2<Space>th`, `3<Space>th`로 번호 전환
 - `<Space>ts`로 터미널 목록을 보고 원하는 터미널 선택
 
@@ -659,14 +669,14 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `cs{old}{new}` | Normal | 감싸기 변경 |
 | `ds{char}` | Normal | 감싸기 삭제 |
 | `S{char}` | Visual | 선택 영역 감싸기 |
-| `Ctrl+\` | Normal/Terminal | 터미널 토글 |
+| `Ctrl+\`` | Normal/Terminal | 터미널 토글 |
 | `<Space>tf` | Normal | float 터미널 |
 | `<Space>th` | Normal | horizontal 터미널 |
 | `<Space>tv` | Normal | vertical 터미널 |
 | `<Space>tt` | Normal | tab 터미널 (전체화면) |
 | `<Space>tg` | Normal | lazygit |
 | `<Space>ts` | Normal | 터미널 목록 선택 |
-| `Esc` | Terminal | Normal 모드 전환 |
+| `Ctrl+\ Ctrl+n` | Terminal | Neovim Normal 모드 전환 |
 | `Alt+z` | Normal | 워드 랩 토글 |
 | `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
 | `<Space>sl` | Normal | 마지막 세션 복원 |
