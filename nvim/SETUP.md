@@ -167,6 +167,11 @@ nvim
 | rcarriga/nvim-dap-ui | 디버깅 UI (변수, 콜스택, 브레이크포인트 등) |
 | nvim-neotest/nvim-nio | nvim-dap-ui 의존 라이브러리 (비동기 IO) |
 | leoluz/nvim-dap-go | Go 디버깅 어댑터 (delve) |
+| lewis6991/gitsigns.nvim | git 변경 표시, hunk 탐색/스테이징, blame |
+| folke/which-key.nvim | 키맵 팝업 (leader 키 누르면 가능한 키 표시) |
+| lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python 파일 전용) |
+| nvim-lualine/lualine.nvim | 상태바 (모드, git branch, diagnostics, 파일 정보) |
+| folke/todo-comments.nvim | TODO/FIXME/HACK 하이라이팅 및 검색 |
 
 ### Mason으로 LSP/도구 확인
 
@@ -224,6 +229,67 @@ nvim main.py
 - **린팅**: ruff 린터가 코드 문제를 진단으로 표시
 - **들여쓰기**: Python 파일에서 스페이스 기반 들여쓰기 (`expandtab`, `tabstop=4`)
 - **가상환경**: `<Space>vs`로 venv/conda 환경 선택
+
+## 공통 기능 가이드
+
+### 키맵 찾기 (which-key.nvim)
+
+`<Space>`를 누르고 잠시 기다리면 사용 가능한 키맵 목록이 팝업으로 표시된다.
+키맵을 외울 필요 없이 그룹별로 탐색할 수 있다.
+
+```
+<Space> 후 대기    키맵 그룹 팝업 (find, terminal, debug, session, git 등)
+<Space>?           현재 버퍼의 키맵 목록
+```
+
+팝업에서 다음 키를 누르면 해당 그룹의 하위 키맵이 표시된다.
+
+### Git 변경 표시 (gitsigns.nvim)
+
+편집 중인 파일의 git 변경 사항을 gutter(줄 번호 옆)에 표시한다. lazygit과
+함께 사용하면 편집기 안에서 git 워크플로우를 완결할 수 있다.
+
+**Hunk 탐색** — 변경된 코드 블록(hunk) 사이를 이동한다.
+
+```
+]c    다음 hunk로 이동
+[c    이전 hunk로 이동
+```
+
+**Hunk 조작**
+
+```
+<Space>gs    hunk 스테이징 (git add 부분 적용)
+<Space>gr    hunk 되돌리기 (변경 취소)
+<Space>gu    스테이징 취소
+<Space>gp    hunk 미리보기 (팝업)
+```
+
+Visual 모드에서 `<Space>gs`/`<Space>gr`을 사용하면 선택한 줄만 스테이징/되돌리기할
+수 있다.
+
+**Blame**
+
+```
+<Space>gb    현재 줄의 blame 정보 팝업 (커밋 해시, 작성자, 날짜, 메시지)
+<Space>gB    인라인 blame 토글 (각 줄 끝에 blame 표시)
+```
+
+**Diff**
+
+```
+<Space>gd    현재 파일을 index(스테이징 영역)와 비교
+```
+
+### TODO 주석 (todo-comments.nvim)
+
+코드에 `TODO`, `FIXME`, `HACK`, `NOTE` 등의 주석을 작성하면 자동으로 하이라이팅된다.
+
+```
+]t              다음 TODO 주석으로 이동
+[t              이전 TODO 주석으로 이동
+<Space>ft       프로젝트 전체 TODO 검색 (telescope)
+```
 
 ## Go 소스코드 편집 가이드
 
@@ -797,3 +863,14 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
 | `<Space>du` | Normal | DAP UI 토글 |
+| `<Space>?` | Normal | 버퍼 키맵 목록 (which-key) |
+| `]c` / `[c` | Normal | 다음/이전 git hunk |
+| `<Space>gs` | Normal/Visual | hunk 스테이징 |
+| `<Space>gr` | Normal/Visual | hunk 되돌리기 |
+| `<Space>gu` | Normal | 스테이징 취소 |
+| `<Space>gp` | Normal | hunk 미리보기 |
+| `<Space>gb` | Normal | blame 팝업 |
+| `<Space>gB` | Normal | 인라인 blame 토글 |
+| `<Space>gd` | Normal | diff (index 비교) |
+| `]t` / `[t` | Normal | 다음/이전 TODO |
+| `<Space>ft` | Normal | TODO 검색 (telescope) |
