@@ -639,6 +639,7 @@ F10          step over (다음 줄)
 <Space>dr    재시작
 <Space>dt    종료
 <Space>du    DAP UI 토글
+<Space>dT    커서 위치의 테스트 함수 디버깅 (Go: delve, Python: debugpy)
 ```
 
 ### 실행 구성 (Go)
@@ -678,6 +679,7 @@ Python 파일에서 `<Space>dc`로 디버깅을 시작하면 아래 목록에서
 
 1. 디버깅할 코드에서 `<Space>db`로 브레이크포인트를 설정한다
 2. `<Space>dc`로 디버깅을 시작하고 실행 구성을 선택한다
+   - 테스트 함수를 디버깅하려면 커서를 테스트 함수 안에 놓고 `<Space>dT`를 누른다
 3. 브레이크포인트에서 멈추면 DAP UI가 자동으로 열린다
 4. `<Space>di`/`<Space>do`/`<Space>dO`로 코드를 한 줄씩 실행한다
 5. DAP UI에서 변수 값, 콜스택, 브레이크포인트 목록을 확인한다
@@ -900,6 +902,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
 | `<Space>du` | Normal | DAP UI 토글 |
+| `<Space>dT` | Normal | 커서 위치 테스트 함수 디버깅 |
 | `<Space>k` | Normal | which-key 토글 (기본 OFF) |
 | `<Space>?` | Normal | 버퍼 키맵 목록 (which-key) |
 | `]c` / `[c` | Normal | 다음/이전 git hunk |

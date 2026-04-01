@@ -17,6 +17,16 @@ return {
       { "<leader>dr", function() require("dap").restart() end, desc = "Restart" },
       { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
       { "<leader>du", function() require("dapui").toggle() end, desc = "Toggle DAP UI" },
+      { "<leader>dT", function()
+        local ft = vim.bo.filetype
+        if ft == "go" then
+          require("dap-go").debug_test()
+        elseif ft == "python" then
+          require("dap-python").test_method()
+        else
+          vim.notify("No test runner for filetype: " .. ft, vim.log.levels.WARN)
+        end
+      end, desc = "Debug nearest test" },
     },
     config = function()
       local dap = require("dap")
