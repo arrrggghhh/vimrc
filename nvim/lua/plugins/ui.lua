@@ -43,6 +43,26 @@ return {
       { "<leader>fe", "<cmd>NvimTreeFindFile<CR>", desc = "Reveal file in tree" },
     },
     opts = {
+      on_attach = function(bufnr)
+        local api = require("nvim-tree.api")
+
+        local function map_opts(desc)
+          return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        end
+
+        api.config.mappings.default_on_attach(bufnr)
+
+        vim.keymap.set("n", "E", function()
+          local node = api.tree.get_node_under_cursor()
+          if not node then return end
+          local start_path = node.absolute_path
+          api.tree.expand_all(nil, {
+            expand_until = function(_, n)
+              return n.parent ~= nil and n.parent.absolute_path == start_path
+            end,
+          })
+        end, map_opts("Expand Two Levels"))
+      end,
       filters = {
         custom = { "^\\.git$" },
       },
