@@ -157,7 +157,7 @@ nvim
 | nvim-tree/nvim-tree.lua | 파일 탐색기 |
 | nvim-tree/nvim-web-devicons | 파일 아이콘 (Nerd Font 필요) |
 | akinsho/toggleterm.nvim | 통합 터미널 (float, horizontal, vertical) |
-| folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별) |
+| folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별, 필요 시 브랜치별 분리) |
 | stevearc/aerial.nvim | 코드/문서 아웃라인 (목차 사이드바) |
 | MeanderingProgrammer/render-markdown.nvim | 마크다운 버퍼 내 렌더링 |
 | kylechui/nvim-surround | 괄호/따옴표 등 감싸기 추가/변경/삭제 |
@@ -765,7 +765,14 @@ inner `vim`/`nvim`에서는 평소처럼 `Esc`를 쓴다.
 ### 세션 관리 (persistence.nvim)
 
 tmux의 resurrect처럼 Neovim 종료 시 작업 상태를 자동 저장하고, 다시 열 때 복원할
-수 있다. 세션은 작업 디렉토리별로 `~/.local/state/nvim/sessions/`에 저장된다.
+수 있다. 세션은 `~/.local/state/nvim/sessions/`에 저장된다.
+
+기본 단위는 작업 디렉토리(cwd)다. 즉 같은 프로젝트라도 Neovim을 어느 디렉토리에서
+열었는지에 따라 별도 세션이 생긴다.
+
+Git 저장소에서는 브랜치명도 함께 반영된다. 단, `main`과 `master`는 예외로 보고
+디렉토리 세션을 그대로 사용하며, 그 외 브랜치에서는 같은 디렉토리여도 브랜치별
+세션 파일이 따로 저장된다.
 
 **저장**: 종료 시 버퍼가 2개 이상이면 `Save session?` 확인을 묻는다.
 Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
@@ -773,7 +780,8 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 버퍼 목록, 윈도우 레이아웃, 탭, 커서 위치가 포함된다.
 
 **복원하기**: 같은 디렉토리에서 Neovim을 열고 `<Space>sr`을 누르면 이전 상태가
-복원된다.
+복원된다. 현재 브랜치가 `main`/`master`가 아니면 해당 브랜치 세션을 우선 찾고,
+없으면 디렉토리 기본 세션을 불러온다.
 
 ```
 <Space>sr    현재 디렉토리의 세션 복원
@@ -789,6 +797,8 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 - Go 프로젝트에서 여러 파일을 열고 split 배치한 상태로 작업 → 종료 → 다음 날
   같은 디렉토리에서 `nvim` + `<Space>sr` → 어제 레이아웃 그대로 복원
 - 여러 프로젝트를 오가며 작업할 때 디렉토리별로 세션이 분리되어 편리
+- 같은 프로젝트에서 `feature/a`와 `feature/b`를 번갈아 작업할 때 브랜치별로
+  다른 레이아웃과 버퍼 목록을 유지 가능
 
 ## 마크다운 편집 가이드
 
