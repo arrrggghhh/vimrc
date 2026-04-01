@@ -285,8 +285,13 @@ Visual 모드에서 `<Space>gs`/`<Space>gr`을 사용하면 선택한 줄만 스
 
 ### TODO 주석 (todo-comments.nvim)
 
-코드 주석에서 `TODO`, `FIX`, `FIXME`, `BUG`, `HACK`, `WARN`, `WARNING`, `XXX`,
-`PERF`, `OPTIMIZE`, `NOTE`, `INFO`, `TEST` 등의 키워드를 자동으로 하이라이팅한다.
+아무 영문 대문자 단어를 인식하는 것은 아니며, 미리 정의된 키워드와 alias만
+하이라이팅한다.
+
+기본 키워드는 `TODO`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST`다.
+
+기본 alias로 `FIXME`, `BUG`, `FIXIT`, `ISSUE`, `WARNING`, `XXX`, `OPTIM`,
+`PERFORMANCE`, `OPTIMIZE`, `INFO`, `TESTING`, `PASSED`, `FAILED`도 함께 인식한다.
 
 기본 형식은 `키워드:` 형태다. 예: `TODO:`, `FIXME:`, `HACK:`, `NOTE:`
 
