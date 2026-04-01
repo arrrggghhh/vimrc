@@ -25,7 +25,7 @@ brew install --cask font-d2coding-nerd-font
 ### 3. 필수 도구 설치
 
 ```sh
-brew install neovim go tree-sitter ripgrep
+brew install neovim go tree-sitter ripgrep python3
 ```
 
 Go 도구는 go install로 설치한다.
@@ -60,7 +60,7 @@ ln -s ~/tools/vimrc/nvim ~/.config/nvim
 
 ```sh
 sudo apt update
-sudo apt install -y git curl build-essential
+sudo apt install -y git curl build-essential python3 python3-pip python3-venv
 ```
 
 ### 2. Neovim 설치
@@ -161,16 +161,23 @@ nvim
 | stevearc/aerial.nvim | 코드/문서 아웃라인 (목차 사이드바) |
 | MeanderingProgrammer/render-markdown.nvim | 마크다운 버퍼 내 렌더링 |
 | kylechui/nvim-surround | 괄호/따옴표 등 감싸기 추가/변경/삭제 |
+| stevearc/conform.nvim | 포매터 통합 관리 (저장 시 자동 포맷) |
+| linux-cultist/venv-selector.nvim | Python 가상환경 선택 |
+| mfussenegger/nvim-dap | DAP(Debug Adapter Protocol) 클라이언트 |
+| rcarriga/nvim-dap-ui | 디버깅 UI (변수, 콜스택, 브레이크포인트 등) |
+| nvim-neotest/nvim-nio | nvim-dap-ui 의존 라이브러리 (비동기 IO) |
+| leoluz/nvim-dap-go | Go 디버깅 어댑터 (delve) |
 
-### Mason으로 gopls 확인
+### Mason으로 LSP/도구 확인
 
-Mason이 gopls를 자동 설치하도록 설정되어 있다 (`ensure_installed = { "gopls" }`).
-시스템에 이미 gopls가 있으면 그대로 사용되고, 없으면 Mason이 설치한다.
+Mason이 LSP 서버를 자동 설치하도록 설정되어 있다 (`ensure_installed = { "gopls", "pyright", "ruff" }`).
+시스템에 이미 해당 도구가 있으면 그대로 사용되고, 없으면 Mason이 설치한다.
 
-goimports는 자동 설치 대상이 아니므로, 2단계에서 `go install`로 설치하지 않았다면 Mason에서 수동 설치한다.
+goimports와 delve(Go 디버거)는 자동 설치 대상이 아니므로 수동 설치한다.
 
 ```vim
 :MasonInstall goimports
+:MasonInstall delve
 ```
 
 ### Treesitter 파서 확인
@@ -182,9 +189,9 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 :lua print(vim.inspect(require("nvim-treesitter").get_installed()))
 ```
 
-go, gomod, gosum, gotmpl, lua, markdown, markdown_inline, query, vim, vimdoc 파서가 있어야 한다.
+go, gomod, gosum, gotmpl, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
 
-### 동작 확인
+### 동작 확인 (Go)
 
 Go 프로젝트 디렉토리에서 `.go` 파일을 열어 다음을 확인한다.
 
@@ -200,6 +207,23 @@ nvim main.go
 - **Sticky context**: 긴 함수/구조체 스크롤 시 이름이 상단에 고정 표시
 - **파일 탐색기**: `<Space>e`로 nvim-tree 열기/포커스, 트리 안에서 `q`로 닫기
 - **들여쓰기**: Go 파일에서 탭 기반 들여쓰기 (`noexpandtab`, `tabstop=4`)
+
+### 동작 확인 (Python)
+
+Python 프로젝트 디렉토리에서 `.py` 파일을 열어 다음을 확인한다.
+
+```sh
+cd ~/your-python-project
+nvim main.py
+```
+
+- **LSP**: `gd`(정의 이동), `gr`(참조 찾기), `K`(호버) 동작 확인
+- **자동완성**: Insert 모드에서 `.` 입력 시 완성 목록 표시
+- **Format on save**: `:w` 시 ruff가 자동 적용 (import 정리 + 포맷)
+- **Treesitter**: 구문 하이라이팅 적용 확인
+- **린팅**: ruff 린터가 코드 문제를 진단으로 표시
+- **들여쓰기**: Python 파일에서 스페이스 기반 들여쓰기 (`expandtab`, `tabstop=4`)
+- **가상환경**: `<Space>vs`로 venv/conda 환경 선택
 
 ## Go 소스코드 편집 가이드
 
@@ -485,6 +509,89 @@ VS Code에서 넘어오면 가장 헷갈리는 부분이다. Neovim은 보통 `�
 
 저장(`:w`) 시 goimports가 자동 실행되어 import 정리와 코드 포맷이 적용된다.
 
+## Python 소스코드 편집 가이드
+
+### LSP 구성
+
+Python은 두 개의 LSP 서버가 동시에 동작한다.
+
+- **pyright**: 타입 체킹, 자동완성, 정의 이동, 호버 정보
+- **ruff**: 린팅 (코드 스타일, 잠재적 버그 검출), 코드 액션 (자동 수정)
+
+코드 탐색, 자동완성, 키맵 등은 Go와 동일하게 작동한다 (`gd`, `gr`, `K`,
+`<Space>rn`, `<Space>ca` 등).
+
+### Format on save (conform.nvim)
+
+저장(`:w`) 시 conform.nvim이 ruff를 실행하여 자동 포맷팅한다.
+
+1. **ruff fix** — 자동 수정 가능한 린트 이슈 해결, import 정리
+2. **ruff format** — 코드 포맷팅 (black 호환 스타일)
+
+`:ConformInfo`로 현재 파일에 적용되는 포매터 상태를 확인할 수 있다.
+
+### 가상환경 (venv-selector.nvim)
+
+pyright가 올바른 패키지를 인식하려면 프로젝트의 가상환경을 선택해야 한다.
+
+```
+<Space>vs    가상환경 목록을 telescope로 검색하여 선택
+```
+
+venv, virtualenv, conda, poetry 등 다양한 환경을 자동 탐지한다. 선택하면
+pyright가 해당 환경의 패키지를 인식하여 자동완성과 타입 체킹이 정상 동작한다.
+
+### 들여쓰기
+
+Python 파일은 스페이스 4칸 들여쓰기가 자동 적용된다 (`expandtab`, `tabstop=4`,
+`shiftwidth=4`).
+
+## 디버깅 (nvim-dap)
+
+DAP(Debug Adapter Protocol)를 통해 에디터 안에서 직접 디버깅할 수 있다.
+현재 Go 디버깅이 설정되어 있다 (delve 사용).
+
+### 사전 준비
+
+Go 디버깅에는 delve가 필요하다. Mason으로 설치한다.
+
+```vim
+:MasonInstall delve
+```
+
+### 기본 키맵
+
+```
+<Space>db    브레이크포인트 토글
+<Space>dc    디버깅 시작 / 계속 (continue)
+<Space>di    step into (함수 안으로)
+<Space>do    step over (다음 줄)
+<Space>dO    step out (함수 밖으로)
+<Space>dr    재시작
+<Space>dt    종료
+<Space>du    DAP UI 토글
+```
+
+### 사용 흐름
+
+1. 디버깅할 코드에서 `<Space>db`로 브레이크포인트를 설정한다
+2. `<Space>dc`로 디버깅을 시작한다 (Go 파일이면 delve가 자동 실행)
+3. 브레이크포인트에서 멈추면 DAP UI가 자동으로 열린다
+4. `<Space>di`/`<Space>do`/`<Space>dO`로 코드를 한 줄씩 실행한다
+5. DAP UI에서 변수 값, 콜스택, 브레이크포인트 목록을 확인한다
+6. `<Space>dt`로 디버깅을 종료하면 DAP UI가 자동으로 닫힌다
+
+### DAP UI 패널
+
+디버깅이 시작되면 자동으로 UI가 열리며 다음 패널이 표시된다.
+
+- **Scopes**: 현재 스코프의 지역/전역 변수 값
+- **Breakpoints**: 설정된 브레이크포인트 목록
+- **Stacks**: 콜스택 (함수 호출 경로)
+- **Watches**: 감시 표현식 (수동 추가)
+
+`<Space>du`로 UI를 수동으로 열고 닫을 수 있다.
+
 ### 통합 터미널 (toggleterm.nvim)
 
 VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 수 있다.
@@ -681,3 +788,12 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
 | `<Space>sl` | Normal | 마지막 세션 복원 |
 | `<Space>ss` | Normal | 세션 수동 저장 |
+| `<Space>vs` | Normal | Python 가상환경 선택 |
+| `<Space>db` | Normal | 브레이크포인트 토글 |
+| `<Space>dc` | Normal | 디버깅 시작/계속 |
+| `<Space>di` | Normal | step into |
+| `<Space>do` | Normal | step over |
+| `<Space>dO` | Normal | step out |
+| `<Space>dr` | Normal | 디버깅 재시작 |
+| `<Space>dt` | Normal | 디버깅 종료 |
+| `<Space>du` | Normal | DAP UI 토글 |
