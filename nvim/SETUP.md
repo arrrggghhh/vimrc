@@ -25,7 +25,7 @@ brew install --cask font-d2coding-nerd-font
 ### 3. 필수 도구 설치
 
 ```sh
-brew install neovim go tree-sitter ripgrep python3
+brew install neovim go tree-sitter-cli ripgrep python3
 ```
 
 Go 도구는 go install로 설치한다.
