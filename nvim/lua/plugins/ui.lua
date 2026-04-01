@@ -66,6 +66,13 @@ return {
           })
         end, map_opts("Expand Two Levels"))
       end,
+      actions = {
+        open_file = {
+          window_picker = {
+            enable = false,
+          },
+        },
+      },
       filters = {
         custom = { "^\\.git$" },
       },
