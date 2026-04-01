@@ -24,6 +24,13 @@ return {
       dapui.setup()
       require("dap-go").setup()
 
+      table.insert(dap.configurations.go, 1, {
+        type = "go",
+        name = "Debug (debug/main.go)",
+        request = "launch",
+        program = "${workspaceFolder}/debug",
+      })
+
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
       end
