@@ -168,7 +168,7 @@ nvim
 | nvim-neotest/nvim-nio | nvim-dap-ui 의존 라이브러리 (비동기 IO) |
 | leoluz/nvim-dap-go | Go 디버깅 어댑터 (delve) |
 | lewis6991/gitsigns.nvim | git 변경 표시, hunk 탐색/스테이징, blame |
-| folke/which-key.nvim | 키맵 팝업 (leader 키 누르면 가능한 키 표시) |
+| folke/which-key.nvim | 키맵 팝업 (기본 비활성, `<Space>k`로 토글) |
 | lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python 파일 전용) |
 | nvim-lualine/lualine.nvim | 상태바 (모드, git branch, diagnostics, 파일 정보) |
 | folke/todo-comments.nvim | TODO/FIXME/HACK 하이라이팅 및 검색 |
@@ -234,12 +234,13 @@ nvim main.py
 
 ### 키맵 찾기 (which-key.nvim)
 
-`<Space>`를 누르고 잠시 기다리면 사용 가능한 키맵 목록이 팝업으로 표시된다.
-키맵을 외울 필요 없이 그룹별로 탐색할 수 있다.
+기본적으로 비활성화되어 있다. 키맵이 헷갈릴 때 `<Space>k`로 켜면 `<Space>` 등
+prefix 키를 누르고 잠시 기다렸을 때 사용 가능한 키맵 목록이 팝업으로 표시된다.
+다시 `<Space>k`를 누르면 비활성화된다.
 
 ```
-<Space> 후 대기    키맵 그룹 팝업 (find, terminal, debug, session, git 등)
-<Space>?           현재 버퍼의 키맵 목록
+<Space>k           which-key 토글 (ON/OFF)
+<Space>?           현재 버퍼의 키맵 목록 (which-key 상태와 무관하게 항상 동작)
 ```
 
 팝업에서 다음 키를 누르면 해당 그룹의 하위 키맵이 표시된다.
@@ -863,6 +864,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
 | `<Space>du` | Normal | DAP UI 토글 |
+| `<Space>k` | Normal | which-key 토글 (기본 OFF) |
 | `<Space>?` | Normal | 버퍼 키맵 목록 (which-key) |
 | `]c` / `[c` | Normal | 다음/이전 git hunk |
 | `<Space>gs` | Normal/Visual | hunk 스테이징 |
