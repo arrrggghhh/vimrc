@@ -19,7 +19,9 @@ return {
         "lua",
         "markdown",
         "markdown_inline",
+        "python",
         "query",
+        "toml",
         "vim",
         "vimdoc",
       }
@@ -30,7 +32,9 @@ return {
         "gotmpl",
         "lua",
         "markdown",
+        "python",
         "query",
+        "toml",
         "vim",
       }
       local treesitter = require("nvim-treesitter")

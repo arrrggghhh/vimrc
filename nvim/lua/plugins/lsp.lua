@@ -1,5 +1,6 @@
 local go_format_group = vim.api.nvim_create_augroup("go-format-on-save", { clear = false })
 local go_filetype_group = vim.api.nvim_create_augroup("go-filetype-setup", { clear = true })
+local python_filetype_group = vim.api.nvim_create_augroup("python-filetype-setup", { clear = true })
 local lsp_navigation = require("config.lsp_navigation")
 
 local function mason_binary(package, binary)
@@ -149,7 +150,7 @@ return {
     },
     opts = {
       automatic_enable = false,
-      ensure_installed = { "gopls" },
+      ensure_installed = { "gopls", "pyright", "ruff" },
     },
   },
   {
@@ -221,7 +222,36 @@ return {
         },
       })
 
+      vim.lsp.config("pyright", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" },
+        settings = {
+          pyright = {
+            disableOrganizeImports = true,
+          },
+          python = {
+            analysis = {
+              typeCheckingMode = "basic",
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      })
+
+      vim.lsp.config("ruff", {
+        capabilities = capabilities,
+        on_attach = function(client, bufnr)
+          client.server_capabilities.hoverProvider = false
+          on_attach(client, bufnr)
+        end,
+      })
+
       vim.lsp.enable("gopls")
+      vim.lsp.enable("pyright")
+      vim.lsp.enable("ruff")
+
       vim.api.nvim_create_autocmd("FileType", {
         group = go_filetype_group,
         pattern = "go",
@@ -230,6 +260,17 @@ return {
           vim.bo[args.buf].tabstop = 4
           vim.bo[args.buf].shiftwidth = 4
           format_go_buffer(args.buf)
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = python_filetype_group,
+        pattern = "python",
+        callback = function(args)
+          vim.bo[args.buf].expandtab = true
+          vim.bo[args.buf].tabstop = 4
+          vim.bo[args.buf].shiftwidth = 4
+          vim.bo[args.buf].softtabstop = 4
         end,
       })
     end,
