@@ -5,6 +5,7 @@ return {
       "rcarriga/nvim-dap-ui",
       "nvim-neotest/nvim-nio",
       "leoluz/nvim-dap-go",
+      "mfussenegger/nvim-dap-python",
     },
     keys = {
       { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle breakpoint" },
@@ -23,6 +24,9 @@ return {
 
       dapui.setup()
       require("dap-go").setup()
+
+      local debugpy_python = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+      require("dap-python").setup(debugpy_python)
 
       table.insert(dap.configurations.go, 1, {
         type = "go",

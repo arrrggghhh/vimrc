@@ -167,6 +167,7 @@ nvim
 | rcarriga/nvim-dap-ui | 디버깅 UI (변수, 콜스택, 브레이크포인트 등) |
 | nvim-neotest/nvim-nio | nvim-dap-ui 의존 라이브러리 (비동기 IO) |
 | leoluz/nvim-dap-go | Go 디버깅 어댑터 (delve) |
+| mfussenegger/nvim-dap-python | Python 디버깅 어댑터 (debugpy) |
 | lewis6991/gitsigns.nvim | git 변경 표시, hunk 탐색/스테이징, blame |
 | folke/which-key.nvim | 키맵 팝업 (기본 비활성, `<Space>k`로 토글) |
 | lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python 파일 전용) |
@@ -616,14 +617,14 @@ Python 파일은 스페이스 4칸 들여쓰기가 자동 적용된다 (`expandt
 ## 디버깅 (nvim-dap)
 
 DAP(Debug Adapter Protocol)를 통해 에디터 안에서 직접 디버깅할 수 있다.
-현재 Go 디버깅이 설정되어 있다 (delve 사용).
+Go(delve)와 Python(debugpy) 디버깅이 설정되어 있다.
 
 ### 사전 준비
 
-Go 디버깅에는 delve가 필요하다. Mason으로 설치한다.
+Go 디버깅에는 delve, Python 디버깅에는 debugpy가 필요하다. Mason으로 설치한다.
 
 ```vim
-:MasonInstall delve
+:MasonInstall delve debugpy
 ```
 
 ### 기본 키맵
@@ -658,6 +659,20 @@ F10          step over (다음 줄)
 - debug 모드: 해당 경로에 `package main`과 `main()` 함수가 필요하다
 - test 모드: `go test`로 실행되므로 `main()` 없이 `Test*` 함수가 실행된다
 - 1번은 프로젝트 루트(`go.mod` 위치)에 `debug/main.go`를 만들어 디버깅 진입점으로 사용한다
+
+### 실행 구성 (Python)
+
+Python 파일에서 `<Space>dc`로 디버깅을 시작하면 아래 목록에서 선택한다.
+
+| # | 이름 | 대상 |
+|---|------|------|
+| 1 | Launch file | 현재 파일 |
+| 2 | Launch file with arguments | 현재 파일 + args 입력 |
+| 3 | Attach remote | 실행 중인 debugpy 서버에 연결 |
+| 4 | Run doctests in file | 현재 파일의 doctest 실행 |
+
+- debugpy는 Mason으로 설치한다 (`:MasonInstall debugpy`)
+- 프로젝트의 가상환경을 사용하려면 venv-selector (`<Space>vs`)로 먼저 선택한다
 
 ### 사용 흐름
 
