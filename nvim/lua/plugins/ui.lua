@@ -1,14 +1,17 @@
 return {
   {
-    "folke/tokyonight.nvim",
+    "svrana/neosolarized.nvim",
     lazy = false,
     priority = 1000,
-    opts = {
-      style = "night",
+    dependencies = {
+      "tjdevries/colorbuddy.nvim",
     },
-    config = function(_, opts)
-      require("tokyonight").setup(opts)
-      vim.cmd.colorscheme("tokyonight")
+    config = function()
+      require("neosolarized").setup({
+        comment_italics = true,
+        background_set = true,
+      })
+      vim.cmd.colorscheme("neosolarized")
     end,
   },
   {
