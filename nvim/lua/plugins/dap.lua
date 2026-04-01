@@ -11,6 +11,7 @@ return {
       { "<leader>dc", function() require("dap").continue() end, desc = "Continue" },
       { "<leader>di", function() require("dap").step_into() end, desc = "Step into" },
       { "<leader>do", function() require("dap").step_over() end, desc = "Step over" },
+      { "<F10>", function() require("dap").step_over() end, desc = "Step over" },
       { "<leader>dO", function() require("dap").step_out() end, desc = "Step out" },
       { "<leader>dr", function() require("dap").restart() end, desc = "Restart" },
       { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },

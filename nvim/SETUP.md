@@ -633,6 +633,7 @@ Go 디버깅에는 delve가 필요하다. Mason으로 설치한다.
 <Space>dc    디버깅 시작 / 계속 (continue)
 <Space>di    step into (함수 안으로)
 <Space>do    step over (다음 줄)
+F10          step over (다음 줄)
 <Space>dO    step out (함수 밖으로)
 <Space>dr    재시작
 <Space>dt    종료
@@ -860,6 +861,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>dc` | Normal | 디버깅 시작/계속 |
 | `<Space>di` | Normal | step into |
 | `<Space>do` | Normal | step over |
+| `<F10>` | Normal | step over |
 | `<Space>dO` | Normal | step out |
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
