@@ -285,7 +285,12 @@ Visual 모드에서 `<Space>gs`/`<Space>gr`을 사용하면 선택한 줄만 스
 
 ### TODO 주석 (todo-comments.nvim)
 
-코드에 `TODO`, `FIXME`, `HACK`, `NOTE` 등의 주석을 작성하면 자동으로 하이라이팅된다.
+코드 주석에서 `TODO`, `FIX`, `FIXME`, `BUG`, `HACK`, `WARN`, `WARNING`, `XXX`,
+`PERF`, `OPTIMIZE`, `NOTE`, `INFO`, `TEST` 등의 키워드를 자동으로 하이라이팅한다.
+
+기본 형식은 `키워드:` 형태다. 예: `TODO:`, `FIXME:`, `HACK:`, `NOTE:`
+
+기본 설정은 대소문자를 구분하므로 `TODO:`는 하이라이팅되지만 `todo:`는 하이라이팅되지 않는다.
 
 ```
 ]t              다음 TODO 주석으로 이동
