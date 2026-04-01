@@ -3,6 +3,7 @@ return {
   version = "*",
   keys = {
     { "<C-`>", desc = "Toggle terminal" },
+    { "<F12>", "<C-`>", desc = "Toggle terminal" },
     { "<leader>tf", desc = "Float terminal" },
     { "<leader>th", desc = "Horizontal terminal" },
     { "<leader>tv", desc = "Vertical terminal" },
@@ -38,6 +39,7 @@ return {
     })
 
     local map = vim.keymap.set
+    map("n", "<F12>", "<Cmd>ToggleTerm<CR>", { desc = "Toggle terminal" })
     local function toggle(direction)
       return function()
         vim.cmd(vim.v.count1 .. "ToggleTerm direction=" .. direction)
@@ -54,6 +56,7 @@ return {
       callback = function()
         local topts = { buffer = 0 }
         map("t", "<C-`>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], topts)
+        map("t", "<F12>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], topts)
         map("t", "<C-h>", [[<C-\><C-n><C-w>h]], topts)
         map("t", "<C-j>", [[<C-\><C-n><C-w>j]], topts)
         map("t", "<C-k>", [[<C-\><C-n><C-w>k]], topts)
