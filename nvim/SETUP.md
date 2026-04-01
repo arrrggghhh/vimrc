@@ -640,10 +640,29 @@ F10          step over (다음 줄)
 <Space>du    DAP UI 토글
 ```
 
+### 실행 구성 (Go)
+
+`<Space>dc`로 디버깅을 시작하면 아래 목록에서 선택한다.
+
+| # | 이름 | 대상 | 모드 |
+|---|------|------|------|
+| 1 | Debug (debug/main.go) | `${workspaceFolder}/debug` | debug |
+| 2 | Debug | 현재 파일 | debug |
+| 3 | Debug (Arguments) | 현재 파일 + args 입력 | debug |
+| 4 | Debug (Arguments & Build Flags) | 현재 파일 + args + build flags 입력 | debug |
+| 5 | Debug Package | 현재 파일의 패키지 디렉토리 | debug |
+| 6 | Attach | 실행 중인 프로세스에 연결 | local |
+| 7 | Debug test | 현재 파일 | test |
+| 8 | Debug test (go.mod) | 상대 경로 기준 패키지 | test |
+
+- debug 모드: 해당 경로에 `package main`과 `main()` 함수가 필요하다
+- test 모드: `go test`로 실행되므로 `main()` 없이 `Test*` 함수가 실행된다
+- 1번은 프로젝트 루트(`go.mod` 위치)에 `debug/main.go`를 만들어 디버깅 진입점으로 사용한다
+
 ### 사용 흐름
 
 1. 디버깅할 코드에서 `<Space>db`로 브레이크포인트를 설정한다
-2. `<Space>dc`로 디버깅을 시작한다 (Go 파일이면 delve가 자동 실행)
+2. `<Space>dc`로 디버깅을 시작하고 실행 구성을 선택한다
 3. 브레이크포인트에서 멈추면 DAP UI가 자동으로 열린다
 4. `<Space>di`/`<Space>do`/`<Space>dO`로 코드를 한 줄씩 실행한다
 5. DAP UI에서 변수 값, 콜스택, 브레이크포인트 목록을 확인한다
