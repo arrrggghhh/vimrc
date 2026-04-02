@@ -48,12 +48,17 @@ return {
 
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
+        vim.keymap.set({ "n", "v" }, "K", function()
+          dapui.eval()
+        end, { desc = "DAP eval" })
       end
       dap.listeners.before.event_terminated["dapui_config"] = function()
         dapui.close()
+        vim.keymap.del({ "n", "v" }, "K")
       end
       dap.listeners.before.event_exited["dapui_config"] = function()
         dapui.close()
+        vim.keymap.del({ "n", "v" }, "K")
       end
     end,
   },
