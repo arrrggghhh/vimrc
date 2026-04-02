@@ -11,6 +11,27 @@ map("n", "<leader>h", "<C-w>h", { desc = "Focus left window" })
 map("n", "<leader>j", "<C-w>j", { desc = "Focus lower window" })
 map("n", "<leader>k", "<C-w>k", { desc = "Focus upper window" })
 map("n", "<leader>l", "<C-w>l", { desc = "Focus right window" })
+local function toggle_maximize()
+  if vim.fn.winnr("$") == 1 then
+    return
+  end
+  if vim.t.maximized_sizes then
+    if vim.fn.winrestcmd() == vim.t.maximized_sizes.after then
+      vim.cmd("silent! " .. vim.t.maximized_sizes.before)
+      if vim.fn.winrestcmd() ~= vim.t.maximized_sizes.before then
+        vim.cmd("wincmd =")
+      end
+    end
+    vim.t.maximized_sizes = nil
+  else
+    local before = vim.fn.winrestcmd()
+    vim.cmd("vert resize | resize")
+    vim.t.maximized_sizes = { before = before, after = vim.fn.winrestcmd() }
+  end
+end
+
+map("n", "<C-w>m", toggle_maximize, { desc = "Toggle maximize window", silent = true })
+
 map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
   vim.wo.linebreak = vim.wo.wrap
