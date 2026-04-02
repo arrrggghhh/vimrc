@@ -16,11 +16,9 @@ local function toggle_maximize()
     return
   end
   if vim.t.maximized_sizes then
-    if vim.fn.winrestcmd() == vim.t.maximized_sizes.after then
-      vim.cmd("silent! " .. vim.t.maximized_sizes.before)
-      if vim.fn.winrestcmd() ~= vim.t.maximized_sizes.before then
-        vim.cmd("wincmd =")
-      end
+    vim.cmd("silent! " .. vim.t.maximized_sizes.before)
+    if vim.fn.winrestcmd() ~= vim.t.maximized_sizes.before then
+      vim.cmd("wincmd =")
     end
     vim.t.maximized_sizes = nil
   else
