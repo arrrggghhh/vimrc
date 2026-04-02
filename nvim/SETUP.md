@@ -246,6 +246,22 @@ prefix 키를 누르고 잠시 기다렸을 때 사용 가능한 키맵 목록�
 
 팝업에서 다음 키를 누르면 해당 그룹의 하위 키맵이 표시된다.
 
+### 파일 경로 복사
+
+현재 파일의 경로와 라인 번호(또는 선택 범위)를 시스템 클립보드에 복사한다.
+
+```
+<Space>yp    상대 경로:라인 복사       예: lua/config/keymaps.lua:14
+<Space>yP    절대 경로:라인 복사       예: /Users/z/tools/vimrc/nvim/lua/config/keymaps.lua:14
+```
+
+Visual 모드에서 범위를 선택한 뒤 사용하면 라인 범위가 포함된다.
+
+```
+<Space>yp    상대 경로:범위 복사       예: lua/config/keymaps.lua:14-20
+<Space>yP    절대 경로:범위 복사       예: /Users/z/tools/vimrc/nvim/lua/config/keymaps.lua:14-20
+```
+
 ### Git 변경 표시 (gitsigns.nvim)
 
 편집 중인 파일의 git 변경 사항을 gutter(줄 번호 옆)에 표시한다. lazygit과
@@ -908,6 +924,8 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>tg` | Normal | lazygit |
 | `<Space>ts` | Normal | 터미널 목록 선택 |
 | `Ctrl+\ Ctrl+n` | Terminal | Neovim Normal 모드 전환 |
+| `<Space>yp` | Normal/Visual | 상대 경로:라인(범위) 복사 |
+| `<Space>yP` | Normal/Visual | 절대 경로:라인(범위) 복사 |
 | `Alt+z` | Normal | 워드 랩 토글 |
 | `<Space>sr` | Normal | 세션 복원 (현재 디렉토리) |
 | `<Space>sl` | Normal | 마지막 세션 복원 |
