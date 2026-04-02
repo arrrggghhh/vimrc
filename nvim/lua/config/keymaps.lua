@@ -15,3 +15,25 @@ map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
   vim.wo.linebreak = vim.wo.wrap
 end, { desc = "Toggle word wrap", silent = true })
+
+local function copy_path_location(modifier, mode)
+  local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), modifier)
+  local result
+  if mode == "v" then
+    local start_line = vim.fn.line("v")
+    local end_line = vim.fn.line(".")
+    if start_line > end_line then
+      start_line, end_line = end_line, start_line
+    end
+    result = path .. ":" .. (start_line == end_line and start_line or start_line .. "-" .. end_line)
+  else
+    result = path .. ":" .. vim.fn.line(".")
+  end
+  vim.fn.setreg("+", result)
+  vim.notify(result, vim.log.levels.INFO)
+end
+
+map("n", "<leader>yp", function() copy_path_location(":~:.", "n") end, { desc = "Copy relative path:line", silent = true })
+map("v", "<leader>yp", function() copy_path_location(":~:.", "v") end, { desc = "Copy relative path:range", silent = true })
+map("n", "<leader>yP", function() copy_path_location(":p", "n") end, { desc = "Copy absolute path:line", silent = true })
+map("v", "<leader>yP", function() copy_path_location(":p", "v") end, { desc = "Copy absolute path:range", silent = true })
