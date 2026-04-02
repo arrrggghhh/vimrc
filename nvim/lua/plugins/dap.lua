@@ -16,6 +16,7 @@ return {
       { "<leader>dO", function() require("dap").step_out() end, desc = "Step out" },
       { "<leader>dr", function() require("dap").restart() end, desc = "Restart" },
       { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
+      { "<leader>df", function() require("dap").focus_frame() end, desc = "Focus current frame" },
       { "<leader>du", function() require("dapui").toggle() end, desc = "Toggle DAP UI" },
       { "<leader>dT", function()
         local ft = vim.bo.filetype

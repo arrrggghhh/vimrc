@@ -664,6 +664,7 @@ F10          step over (다음 줄)
 <Space>dO    step out (함수 밖으로)
 <Space>dr    재시작
 <Space>dt    종료
+<Space>df    현재 실행 위치로 커서 이동
 <Space>du    DAP UI 토글
 <Space>dT    커서 위치의 테스트 함수 디버깅 (Go: delve, Python: debugpy)
 ```
@@ -939,6 +940,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>dO` | Normal | step out |
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
+| `<Space>df` | Normal | 현재 실행 위치로 커서 이동 |
 | `<Space>du` | Normal | DAP UI 토글 |
 | `<Space>dT` | Normal | 커서 위치 테스트 함수 디버깅 |
 | `<Space>k` | Normal | which-key 토글 (기본 OFF) |
