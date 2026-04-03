@@ -4,6 +4,7 @@ vim.g.maplocalleader = "\\"
 local opt = vim.opt
 
 opt.clipboard = ""
+opt.cmdheight = 1
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.expandtab = true
 opt.hidden = true
