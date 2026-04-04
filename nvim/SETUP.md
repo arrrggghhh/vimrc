@@ -179,11 +179,12 @@ nvim
 Mason이 LSP 서버를 자동 설치하도록 설정되어 있다 (`ensure_installed = { "gopls", "pyright", "ruff" }`).
 시스템에 이미 해당 도구가 있으면 그대로 사용되고, 없으면 Mason이 설치한다.
 
-goimports와 delve(Go 디버거)는 자동 설치 대상이 아니므로 수동 설치한다.
+goimports, delve(Go 디버거), debugpy(Python 디버거)는 자동 설치 대상이 아니므로 수동 설치한다.
 
 ```vim
 :MasonInstall goimports
 :MasonInstall delve
+:MasonInstall debugpy
 ```
 
 ### Treesitter 파서 확인
