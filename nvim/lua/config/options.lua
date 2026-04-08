@@ -3,6 +3,67 @@ vim.g.maplocalleader = "\\"
 
 local opt = vim.opt
 
+local function configure_clipboard()
+  if vim.fn.has("mac") == 1 then
+    vim.g.clipboard = {
+      name = "pbcopy",
+      copy = { ["+"] = "pbcopy", ["*"] = "pbcopy" },
+      paste = { ["+"] = "pbpaste", ["*"] = "pbpaste" },
+      cache_enabled = 0,
+    }
+    return
+  end
+
+  local is_wsl = vim.fn.has("wsl") == 1
+    or vim.env.WSL_DISTRO_NAME ~= nil
+    or vim.env.WSL_INTEROP ~= nil
+  if is_wsl then
+    if vim.fn.executable("win32yank.exe") == 1 then
+      vim.g.clipboard = {
+        name = "win32yank",
+        copy = {
+          ["+"] = { "win32yank.exe", "-i", "--crlf" },
+          ["*"] = { "win32yank.exe", "-i", "--crlf" },
+        },
+        paste = {
+          ["+"] = { "win32yank.exe", "-o", "--lf" },
+          ["*"] = { "win32yank.exe", "-o", "--lf" },
+        },
+        cache_enabled = 0,
+      }
+    else
+      vim.g.clipboard = {
+        name = "wsl-clip",
+        copy = { ["+"] = "clip.exe", ["*"] = "clip.exe" },
+        paste = {
+          ["+"] = { "powershell.exe", "-NoProfile", "-Command", "Get-Clipboard" },
+          ["*"] = { "powershell.exe", "-NoProfile", "-Command", "Get-Clipboard" },
+        },
+        cache_enabled = 0,
+      }
+    end
+    return
+  end
+
+  local is_ssh = vim.env.SSH_TTY ~= nil or vim.env.SSH_CONNECTION ~= nil
+  local has_native = vim.fn.executable("xclip") == 1
+    or vim.fn.executable("xsel") == 1
+    or vim.fn.executable("wl-copy") == 1
+  if is_ssh or not has_native then
+    local ok, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+    if ok then
+      vim.g.clipboard = {
+        name = "OSC 52",
+        copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+        paste = { ["+"] = osc52.paste("+"), ["*"] = osc52.paste("*") },
+      }
+    end
+    return
+  end
+end
+
+configure_clipboard()
+
 opt.clipboard = ""
 opt.cmdheight = 1
 opt.completeopt = { "menu", "menuone", "noselect" }
