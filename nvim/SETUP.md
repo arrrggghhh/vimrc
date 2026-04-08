@@ -198,7 +198,7 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 :lua print(vim.inspect(require("nvim-treesitter").get_installed()))
 ```
 
-go, gomod, gosum, gotmpl, json, jsonc, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
+go, gomod, gosum, gotmpl, json, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
 
 ### 동작 확인 (Go)
 
