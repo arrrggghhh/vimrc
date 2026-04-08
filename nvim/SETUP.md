@@ -173,6 +173,8 @@ nvim
 | lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python 파일 전용) |
 | nvim-lualine/lualine.nvim | 상태바 (모드, git branch, diagnostics, 파일 정보) |
 | folke/todo-comments.nvim | TODO/FIXME/HACK 하이라이팅 및 검색 |
+| kevinhwang91/nvim-ufo | 모던 fold (treesitter 기반 접기/펼치기/미리보기) |
+| kevinhwang91/promise-async | nvim-ufo 의존 라이브러리 |
 
 ### Mason으로 LSP/도구 확인
 
@@ -196,7 +198,7 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 :lua print(vim.inspect(require("nvim-treesitter").get_installed()))
 ```
 
-go, gomod, gosum, gotmpl, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
+go, gomod, gosum, gotmpl, json, jsonc, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
 
 ### 동작 확인 (Go)
 
@@ -900,6 +902,38 @@ gggqG        파일 전체를 jq로 포맷팅 (gg: 처음, gq: 포맷, G: 끝까
 
 Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 포맷팅할 수도 있다.
 
+## 코드 접기 (nvim-ufo)
+
+`nvim-ufo`가 treesitter 기반으로 fold를 생성한다. JSON, Go, Python, Lua 등
+treesitter 파서가 설치된 파일에서 객체/배열/함수 단위로 부드럽게 접고 펼 수 있다.
+파서가 없는 파일은 `indent` provider로 자동 폴백한다.
+
+기본 동작:
+
+- 파일을 열면 모든 fold가 **펼쳐진 상태**로 시작한다 (`foldlevelstart=99`).
+- 왼쪽에 fold 컬럼이 표시되어 접힘 상태를 아이콘으로 확인할 수 있다.
+- fold 위에서 `zK`를 누르면 접힌 내용을 팝업으로 미리보기 할 수 있고, 팝업
+  안에서 `<C-u>`/`<C-d>`로 스크롤, `[`/`]`로 처음/끝 이동이 된다.
+
+fold 키맵:
+
+```
+za           커서 위치 fold 토글
+zo / zc      fold 펼치기 / 접기
+zR           모든 fold 펼치기          (ufo.openAllFolds)
+zM           모든 fold 접기            (ufo.closeAllFolds)
+zj / zk      다음 / 이전 fold로 이동
+zK           접힌 내용 미리보기 팝업    (ufo.peekFoldedLinesUnderCursor)
+```
+
+`zr`/`zm`은 재매핑하지 않는다. `foldlevelstart=99`이기 때문에 vim 내장 `zr`/`zm`
+(한 단계 증감)도 실질적으로 체감되지 않으므로, 레벨 기반으로 접고 싶으면
+`:set foldlevel=N`을 직접 사용한다. (예: `:set foldlevel=1`은 최상위 fold만
+남기고 모두 접음. `:set foldlevel=99`로 전부 펼침.)
+
+JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_ft.json = {"array"}`로
+설정되어 있다. 전체를 펼치려면 `zR`.
+
 ## 주요 키맵 요약
 
 | 키 | 모드 | 동작 |
@@ -977,3 +1011,7 @@ Visual 모드로 범위를 선택한 뒤 `gq`를 누르면 선택한 부분만 �
 | `<Space>gd` | Normal | diff (index 비교) |
 | `]t` / `[t` | Normal | 다음/이전 TODO |
 | `<Space>ft` | Normal | TODO 검색 (telescope) |
+| `za` | Normal | fold 토글 |
+| `zR` / `zM` | Normal | 모든 fold 펼치기 / 접기 (ufo) |
+| `zj` / `zk` | Normal | 다음 / 이전 fold로 이동 |
+| `zK` | Normal | 접힌 내용 미리보기 팝업 (ufo) |
