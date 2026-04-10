@@ -54,6 +54,10 @@ return {
         end
 
         api.config.mappings.default_on_attach(bufnr)
+        vim.keymap.del("n", "<CR>", { buffer = bufnr })
+        vim.keymap.del("n", "o", { buffer = bufnr })
+        vim.keymap.set("n", "<CR>", api.node.open.no_window_picker, map_opts("Open: No Window Picker"))
+        vim.keymap.set("n", "o", api.node.open.edit, map_opts("Open"))
 
         vim.keymap.set("n", "E", function()
           local node = api.tree.get_node_under_cursor()
@@ -70,7 +74,7 @@ return {
         open_file = {
           resize_window = false,
           window_picker = {
-            enable = false,
+            enable = true,
           },
         },
       },
