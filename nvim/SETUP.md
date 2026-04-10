@@ -754,7 +754,8 @@ VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 �
 **터미널 열기/닫기**
 
 ```
-F12           터미널 토글 (기본: float)
+F12           active 터미널 토글 (기본 대상: 1번)
+<Space>ta     F12가 가리킬 active 터미널 지정
 <Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
 <Space>th     horizontal 터미널 (하단 분할)
 <Space>tv     vertical 터미널 (우측 분할)
@@ -765,12 +766,14 @@ F12           터미널 토글 (기본: float)
 
 float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드를 보면서 실행 결과를
 확인할 때 적합하다. tab은 터미널 작업에 집중하고 싶을 때 전체화면으로 쓴다.
-`go test ./...` 같은 명령은 horizontal이 편하다.
+`go test ./...` 같은 명령은 horizontal이 편하다. `F12`는 마지막에 지정하거나 직접
+토글한 active 터미널 번호를 기억하며, 그 터미널의 기존 방향(float/vertical/horizontal/tab)을
+그대로 유지한다.
 
 **터미널 안에서 조작**
 
 ```
-F12           터미널 닫기 (토글)
+F12           active 터미널 닫기/다시 열기
 Ctrl+\ Ctrl+n 터미널 입력 모드 → Neovim Normal 모드
 i 또는 a      다시 터미널 입력 모드로 진입
 Ctrl+h/j/k/l  터미널에서 다른 창으로 이동
@@ -798,12 +801,16 @@ inner `vim`/`nvim`에서는 평소처럼 `Esc`를 쓴다.
 ```
 2<Space>th    2번 터미널을 horizontal로 열기
 3<Space>tv    3번 터미널을 vertical로 열기
+2F12          2번 터미널을 바로 토글하고, 이후 F12 대상도 2번으로 변경
+2<Space>ta    F12가 가리킬 active 터미널을 2번으로 지정
 <Space>ts     열린 터미널 목록에서 선택
 ```
 
 같은 방향(예: horizontal)의 터미널은 하나의 창을 공유한다. `2<Space>th` 후
 `3<Space>th`를 하면 같은 하단 창에서 3번 터미널로 교체된다. 동시에 나란히
-보여주는 것이 아니라, 한 창 안에서 번호를 전환하는 방식이다.
+보여주는 것이 아니라, 한 창 안에서 번호를 전환하는 방식이다. `2F12`처럼 번호를
+직접 붙여 토글하면 그 번호가 새 active 터미널이 되어 이후 plain `F12`가 그 번호를
+따른다. 단, terminal-mode에서는 plain `F12`만 지원한다.
 
 **활용 예시**
 
@@ -811,6 +818,8 @@ inner `vim`/`nvim`에서는 평소처럼 `Esc`를 쓴다.
 - `<Space>tg`로 lazygit을 열어 커밋, 브랜치 관리
 - `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `F12`로 닫기
 - 여러 터미널이 필요하면 `2<Space>th`, `3<Space>th`로 번호 전환
+- `2<Space>ta`로 "이제부터 F12는 2번"이라고 지정해 두고 plain `F12`만 사용
+- `1F12`, `2F12`처럼 번호별 전용 토글로 바로 전환
 - `<Space>ts`로 터미널 목록을 보고 원하는 터미널 선택
 
 ### 세션 관리 (persistence.nvim)
