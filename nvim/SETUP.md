@@ -754,7 +754,7 @@ VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 �
 **터미널 열기/닫기**
 
 ```
-Ctrl+`        터미널 토글 (기본: float)
+F12           터미널 토글 (기본: float)
 <Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
 <Space>th     horizontal 터미널 (하단 분할)
 <Space>tv     vertical 터미널 (우측 분할)
@@ -770,7 +770,7 @@ float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드�
 **터미널 안에서 조작**
 
 ```
-Ctrl+`        터미널 닫기 (토글)
+F12           터미널 닫기 (토글)
 Ctrl+\ Ctrl+n 터미널 입력 모드 → Neovim Normal 모드
 i 또는 a      다시 터미널 입력 모드로 진입
 Ctrl+h/j/k/l  터미널에서 다른 창으로 이동
@@ -809,7 +809,7 @@ inner `vim`/`nvim`에서는 평소처럼 `Esc`를 쓴다.
 
 - `<Space>th`로 하단 터미널을 열고 `go run .` / `go test ./...` 실행
 - `<Space>tg`로 lazygit을 열어 커밋, 브랜치 관리
-- `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `Ctrl+\``로 닫기
+- `<Space>tf`로 float 터미널을 열어 빠르게 명령 실행 후 `F12`로 닫기
 - 여러 터미널이 필요하면 `2<Space>th`, `3<Space>th`로 번호 전환
 - `<Space>ts`로 터미널 목록을 보고 원하는 터미널 선택
 
