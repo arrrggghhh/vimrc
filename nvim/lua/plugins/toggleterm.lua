@@ -130,10 +130,6 @@ return {
         local topts = { buffer = 0 }
         map("t", "<C-`>", [[<C-\><C-n><Cmd>ToggleActiveTerminal<CR>]], topts)
         map("t", "<F12>", [[<C-\><C-n><Cmd>ToggleActiveTerminal<CR>]], topts)
-        map("t", "<C-h>", [[<C-\><C-n><C-w>h]], topts)
-        map("t", "<C-j>", [[<C-\><C-n><C-w>j]], topts)
-        map("t", "<C-k>", [[<C-\><C-n><C-w>k]], topts)
-        map("t", "<C-l>", [[<C-\><C-n><C-w>l]], topts)
       end,
     })
   end,
