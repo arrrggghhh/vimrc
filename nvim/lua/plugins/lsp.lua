@@ -17,6 +17,21 @@ local function mason_binary(package, binary)
   return nil
 end
 
+local function jump_diagnostic(count)
+  return function()
+    vim.diagnostic.jump({
+      count = count,
+      on_jump = function(_, bufnr)
+        vim.diagnostic.open_float({
+          bufnr = bufnr,
+          scope = "cursor",
+          focus = false,
+        })
+      end,
+    })
+  end
+end
+
 local function map_lsp_keys(bufnr)
   local map = function(mode, lhs, rhs, desc)
     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true })
@@ -30,8 +45,8 @@ local function map_lsp_keys(bufnr)
   map("n", "gY", lsp_navigation.jump_in_current_window(vim.lsp.buf.type_definition), "Type definition")
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
   map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
-  map("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
-  map("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
+  map("n", "[d", jump_diagnostic(-1), "Previous diagnostic")
+  map("n", "]d", jump_diagnostic(1), "Next diagnostic")
 end
 
 local function split_lines(text)
