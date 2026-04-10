@@ -1,6 +1,7 @@
 return {
   "akinsho/toggleterm.nvim",
   version = "*",
+  event = "VimEnter",
   keys = {
     { "<C-`>", desc = "Toggle active terminal" },
     { "<F12>", desc = "Toggle active terminal" },
@@ -32,12 +33,35 @@ return {
     require("toggleterm").setup(opts)
 
     local Terminal = require("toggleterm.terminal").Terminal
+    local api = vim.api
     local lazygit = Terminal:new({
       cmd = "lazygit",
       direction = "float",
       hidden = true,
       float_opts = { border = "curved" },
     })
+
+    local function ensure_terminal(count, direction, term_opts)
+      local term = Terminal:new(vim.tbl_extend("force", {
+        count = count,
+        direction = direction,
+      }, term_opts or {}))
+
+      if not term.bufnr or not api.nvim_buf_is_valid(term.bufnr) then
+        term:spawn()
+      end
+
+      return term
+    end
+
+    local function preload_terminals()
+      if #api.nvim_list_uis() == 0 then
+        return
+      end
+
+      ensure_terminal(1, "vertical")
+      ensure_terminal(2, "float")
+    end
 
     local map = vim.keymap.set
     local active_terminal = 1
@@ -97,6 +121,8 @@ return {
     map("n", "<leader>tv", toggle("vertical"), { desc = "Vertical terminal" })
     map("n", "<leader>tt", toggle("tab"), { desc = "Tab terminal (fullscreen)" })
     map("n", "<leader>tg", function() lazygit:toggle() end, { desc = "Lazygit" })
+
+    vim.schedule(preload_terminals)
 
     vim.api.nvim_create_autocmd("TermOpen", {
       pattern = "term://*toggleterm#*",
