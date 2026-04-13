@@ -592,6 +592,7 @@ VS Code에서 넘어오면 가장 헷갈리는 부분이다. Neovim은 보통 `�
 ```
 [b           이전 버퍼
 ]b           다음 버퍼
+<Space>bd    창은 유지하고 현재 버퍼만 닫기
 ```
 
 **버퍼를 다른 창에서 열기** — 분할과 조합:
@@ -960,6 +961,7 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `gY` | Normal | 타입 정의를 현재 창에서 열기 |
 | `<Space>rn` | Normal | 심볼 이름 변경 |
 | `<Space>ca` | Normal/Visual | 코드 액션 |
+| `<Space>bd` | Normal | 창은 유지하고 현재 버퍼만 닫기 |
 | `[b` / `]b` | Normal | 이전/다음 버퍼 |
 | `[d` / `]d` | Normal | 이전/다음 진단 |
 | `Ctrl+h/j/k/l` | Normal | 분할 창 이동 |

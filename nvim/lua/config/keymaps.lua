@@ -4,6 +4,35 @@ local lsp_navigation = require("config.lsp_navigation")
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { silent = true })
 map("n", "<leader>w", "<cmd>write<CR>", { desc = "Write buffer", silent = true })
 map("n", "<leader>q", "<cmd>quit<CR>", { desc = "Quit window", silent = true })
+
+local function close_buffer_keep_window()
+  local current = vim.api.nvim_get_current_buf()
+  local alternate = vim.fn.bufnr("#")
+
+  if alternate > 0 and vim.api.nvim_buf_is_valid(alternate) and vim.bo[alternate].buflisted then
+    vim.cmd.buffer(alternate)
+  else
+    local replacement
+    for _, buf in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+      if buf.bufnr ~= current then
+        replacement = buf.bufnr
+        break
+      end
+    end
+
+    if replacement then
+      vim.cmd.buffer(replacement)
+    else
+      vim.cmd.enew()
+    end
+  end
+
+  if vim.api.nvim_buf_is_valid(current) then
+    vim.cmd.bdelete(current)
+  end
+end
+
+map("n", "<leader>bd", close_buffer_keep_window, { desc = "Delete buffer", silent = true })
 map("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer", silent = true })
 map("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer", silent = true })
 map("n", "gd", lsp_navigation.goto_definition_in_other_window, { desc = "Go to definition in split", silent = true })

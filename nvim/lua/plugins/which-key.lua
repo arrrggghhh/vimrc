@@ -12,6 +12,7 @@ return {
       return ctx.plugin and 0 or 200
     end,
     spec = {
+      { "<leader>b", group = "buffer" },
       { "<leader>c", group = "code" },
       { "<leader>d", group = "debug" },
       { "<leader>db", desc = "Toggle breakpoint" },
