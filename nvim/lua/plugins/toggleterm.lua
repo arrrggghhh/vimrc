@@ -30,10 +30,41 @@ return {
     end,
   },
   config = function(_, opts)
+    local api = vim.api
+    local terminals = require("toggleterm.terminal")
+    local Terminal = terminals.Terminal
+
+    local function is_toggleterm_buffer(bufnr)
+      return vim.bo[bufnr].filetype == "toggleterm" or vim.b[bufnr].toggle_number ~= nil
+    end
+
+    local user_on_open = opts.on_open
+    opts.on_open = function(term)
+      if user_on_open then
+        user_on_open(term)
+      end
+
+      vim.schedule(function()
+        if not term.window or not api.nvim_win_is_valid(term.window) then
+          return
+        end
+
+        if api.nvim_get_current_win() ~= term.window then
+          return
+        end
+
+        if not is_toggleterm_buffer(api.nvim_win_get_buf(term.window)) then
+          return
+        end
+
+        if api.nvim_get_mode().mode:sub(1, 1) ~= "t" then
+          vim.cmd("startinsert")
+        end
+      end)
+    end
+
     require("toggleterm").setup(opts)
 
-    local Terminal = require("toggleterm.terminal").Terminal
-    local api = vim.api
     local lazygit = Terminal:new({
       cmd = "lazygit",
       direction = "float",
@@ -65,6 +96,10 @@ return {
 
     local map = vim.keymap.set
     local active_terminal = 1
+    local terminal_directions = {
+      [1] = "vertical",
+      [2] = "float",
+    }
 
     local function normalize_terminal_id(id)
       local terminal_id = math.floor(tonumber(id) or 1)
@@ -78,20 +113,85 @@ return {
       active_terminal = normalize_terminal_id(id)
     end
 
-    local function toggle_terminal(id, direction)
-      local terminal_id = normalize_terminal_id(id)
-      local command = terminal_id .. "ToggleTerm"
+    local function remember_terminal_direction(id, direction)
       if direction then
-        command = command .. " direction=" .. direction
+        terminal_directions[normalize_terminal_id(id)] = direction
       end
-      vim.cmd(command)
+    end
+
+    local function get_terminal_direction(id, direction)
+      local terminal_id = normalize_terminal_id(id)
+      local term = terminals.get(terminal_id, true)
+      local resolved_direction = direction or (term and term.direction) or terminal_directions[terminal_id] or opts.direction
+
+      if resolved_direction then
+        terminal_directions[terminal_id] = resolved_direction
+      end
+
+      return resolved_direction
+    end
+
+    local function get_or_create_terminal(id, direction)
+      local terminal_id = normalize_terminal_id(id)
+      local resolved_direction = get_terminal_direction(terminal_id, direction)
+      local term = terminals.get(terminal_id, true)
+
+      if term then
+        return term, resolved_direction
+      end
+
+      return ensure_terminal(terminal_id, resolved_direction), resolved_direction
+    end
+
+    local function toggle_terminal(id, direction)
+      local term, resolved_direction = get_or_create_terminal(id, direction)
+      local is_open = term:is_open()
+
+      term:toggle(nil, resolved_direction)
+
+      if not is_open then
+        remember_terminal_direction(term.id, resolved_direction)
+      end
+    end
+
+    local function get_visible_terminals()
+      local visible = {}
+      local seen = {}
+
+      for _, win in ipairs(api.nvim_tabpage_list_wins(api.nvim_get_current_tabpage())) do
+        local buf = api.nvim_win_get_buf(win)
+
+        if is_toggleterm_buffer(buf) then
+          local term_id = vim.b[buf].toggle_number
+          local term = term_id and terminals.get(term_id, true)
+
+          if term and term:is_open() and not seen[term.id] then
+            seen[term.id] = true
+            table.insert(visible, term)
+          end
+        end
+      end
+
+      return visible
+    end
+
+    local function switch_terminal(id)
+      local terminal_id = normalize_terminal_id(id)
+      local term, resolved_direction = get_or_create_terminal(terminal_id)
+
+      for _, visible_term in ipairs(get_visible_terminals()) do
+        visible_term:close()
+      end
+
+      term:open(nil, resolved_direction)
+      remember_terminal_direction(terminal_id, resolved_direction)
     end
 
     local function toggle_active_terminal()
       local count = vim.v.count
       if count > 0 then
         set_active_terminal(count)
-        toggle_terminal(count)
+        switch_terminal(count)
         return
       end
 
