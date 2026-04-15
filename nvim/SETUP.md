@@ -586,6 +586,8 @@ VS Code에서 넘어오면 가장 헷갈리는 부분이다. Neovim은 보통 `�
 :enew           빈 버퍼 생성
 :bd             현재 버퍼 닫기
 :bd foo.go      특정 버퍼 지정 닫기
+:BufOnlyVisible 현재 보이는 버퍼만 남기고 나머지 listed buffer 닫기
+:BufOnlyVisible! 수정된 hidden buffer도 강제로 닫기
 :ls             열린 버퍼 목록과 번호 확인
 ```
 
