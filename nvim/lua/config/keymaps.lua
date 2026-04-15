@@ -32,7 +32,51 @@ local function close_buffer_keep_window()
   end
 end
 
+local function delete_other_buffers_keep_visible(args)
+  local keep = {}
+  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      if vim.api.nvim_buf_is_valid(buf) then
+        keep[buf] = true
+      end
+    end
+  end
+
+  local deleted = 0
+  local failed = 0
+
+  for _, buf in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+    if not keep[buf.bufnr] then
+      local cmd = (args.bang and "bdelete! " or "bdelete ") .. buf.bufnr
+      local ok = pcall(vim.cmd, cmd)
+      if ok then
+        deleted = deleted + 1
+      else
+        failed = failed + 1
+      end
+    end
+  end
+
+  if failed > 0 then
+    vim.notify(
+      string.format("Deleted %d buffers, %d could not be deleted", deleted, failed),
+      vim.log.levels.WARN
+    )
+    return
+  end
+
+  vim.notify(
+    deleted == 0 and "No hidden buffers to delete" or string.format("Deleted %d hidden buffers", deleted),
+    vim.log.levels.INFO
+  )
+end
+
 map("n", "<leader>bd", close_buffer_keep_window, { desc = "Delete buffer", silent = true })
+vim.api.nvim_create_user_command("BufOnlyVisible", delete_other_buffers_keep_visible, {
+  bang = true,
+  desc = "Delete all listed buffers except those visible in windows",
+})
 map("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer", silent = true })
 map("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer", silent = true })
 map("n", "gd", lsp_navigation.goto_definition_in_other_window, { desc = "Go to definition in split", silent = true })
