@@ -1,3 +1,5 @@
+local util = require("vim.lsp.util")
+
 local M = {}
 
 local sidebar_filetypes = {
@@ -76,6 +78,141 @@ local function open_lsp_item_in_other_window(item, source_buf, source_win, from,
   vim.api.nvim_set_current_win(target_win)
 end
 
+local function normalize_inline_whitespace(text)
+  return vim.trim((text or ""):gsub("%s+", " "))
+end
+
+local function hover_markdown_lines(contents)
+  if type(contents) == "table" and contents.kind == "plaintext" then
+    return vim.split(contents.value or "", "\n", { trimempty = true })
+  end
+
+  return util.convert_input_to_markdown_lines(contents)
+end
+
+local function first_nonempty_line(lines)
+  for _, line in ipairs(lines) do
+    local trimmed = vim.trim(line)
+    if trimmed ~= "" and trimmed ~= "---" then
+      return trimmed
+    end
+  end
+end
+
+local function first_code_block(lines)
+  local inside = false
+  local block = {}
+
+  for _, line in ipairs(lines) do
+    if line:match("^```") then
+      if inside and #block > 0 then
+        return block
+      end
+      inside = not inside
+    elseif inside then
+      local trimmed = vim.trim(line)
+      if trimmed ~= "" then
+        table.insert(block, trimmed)
+      end
+    end
+  end
+
+  if #block > 0 then
+    return block
+  end
+end
+
+local function looks_like_type(text)
+  return text:match("^%*")
+    or text:match("^%[%]")
+    or text:match("^map%[")
+    or text:match("^chan[%s<]")
+    or text:match("^<-chan%s")
+    or text:match("^func%s*%(")
+    or text:match("^struct%s*{")
+    or text:match("^interface%s*{")
+    or text:match("^[%w_%.]+$")
+    or text:match("^[%w_%.]+%b[]")
+end
+
+local function extract_type_from_line(line)
+  line = normalize_inline_whitespace(line)
+  if line == "" then
+    return nil
+  end
+
+  local declared_type = line:match("^var%s+[%w_,%s]+%s+(.+)$")
+    or line:match("^const%s+[%w_,%s]+%s+(.+)$")
+    or line:match("^field%s+[%w_,%s]+%s+(.+)$")
+    or line:match("^parameter%s+[%w_,%s]+%s+(.+)$")
+  if declared_type then
+    return normalize_inline_whitespace(declared_type)
+  end
+
+  local colon_type = line:match("^[%w_]+%s*:%s*(.+)$")
+  if colon_type then
+    return normalize_inline_whitespace(colon_type)
+  end
+
+  local _, bare_type = line:match("^([%w_,%s]+)%s+(.+)$")
+  if bare_type then
+    bare_type = normalize_inline_whitespace(bare_type)
+    if looks_like_type(bare_type) then
+      return bare_type
+    end
+  end
+
+  if looks_like_type(line) then
+    return line
+  end
+end
+
+local function extract_type_candidate(lines)
+  if not lines or #lines == 0 then
+    return nil
+  end
+
+  local candidates = { lines[1] }
+  if #lines > 1 then
+    table.insert(candidates, table.concat(lines, " "))
+  end
+
+  for _, candidate in ipairs(candidates) do
+    local type_text = extract_type_from_line(candidate)
+    if type_text then
+      return type_text
+    end
+  end
+end
+
+local function extract_inline_code(lines)
+  for _, line in ipairs(lines) do
+    local code = line:match("`([^`]+)`")
+    if code then
+      return normalize_inline_whitespace(code)
+    end
+  end
+end
+
+local function extract_type_from_hover(contents)
+  local lines = hover_markdown_lines(contents)
+  if #lines == 0 then
+    return nil
+  end
+
+  local code_block = first_code_block(lines)
+  if code_block then
+    return extract_type_candidate(code_block) or first_nonempty_line(code_block)
+  end
+
+  return extract_type_candidate(lines) or extract_inline_code(lines)
+end
+
+local function set_type_registers(text)
+  vim.fn.setreg('"', text, "v")
+  return pcall(vim.fn.setreg, "+", text, "v")
+end
+
 function M.jump_in_current_window(jump)
   return function()
     jump()
@@ -121,6 +258,52 @@ function M.goto_definition_in_other_window()
 
   vim.api.nvim_set_current_win(target_win)
   vim.cmd("normal! gd")
+end
+
+function M.copy_symbol_type()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local win = vim.api.nvim_get_current_win()
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/hover" })
+  local last_error
+
+  if vim.tbl_isempty(clients) then
+    vim.notify("No hover-capable LSP client attached", vim.log.levels.WARN)
+    return
+  end
+
+  for _, client in ipairs(clients) do
+    local response, err = client:request_sync(
+      "textDocument/hover",
+      util.make_position_params(win, client.offset_encoding),
+      1000,
+      bufnr
+    )
+
+    if err then
+      last_error = string.format("%s hover request failed: %s", client.name, err)
+    elseif response and response.result and response.result.contents then
+      local type_text = extract_type_from_hover(response.result.contents)
+      if type_text and type_text ~= "" then
+        local copied_clipboard, clipboard_err = set_type_registers(type_text)
+        if copied_clipboard then
+          vim.notify(string.format("Copied type: %s", type_text), vim.log.levels.INFO)
+        else
+          vim.notify(
+            string.format('Copied type to " but failed to update +: %s', clipboard_err),
+            vim.log.levels.WARN
+          )
+        end
+        return
+      end
+    end
+  end
+
+  if last_error then
+    vim.notify(last_error, vim.log.levels.WARN)
+    return
+  end
+
+  vim.notify("No type information available", vim.log.levels.WARN)
 end
 
 return M

@@ -399,6 +399,7 @@ gD    definition을 현재 창에서 열기
 ```
 gy    type definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성, 여러 창이어도 현재 커서 기준으로 조회)
 gY    type definition을 현재 창에서 열기
+<Space>yt    현재 심볼의 타입 문자열을 unnamed register와 system clipboard에 복사
 ```
 
 **함수 정의로 이동** — 함수 호출 위에 커서를 놓고:
@@ -960,6 +961,7 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `K` | Normal | 호버 정보 (디버그 중에는 변수 런타임 값 표시) |
 | `gy` | Normal | 타입 정의를 다른 창에서 열기 |
 | `gY` | Normal | 타입 정의를 현재 창에서 열기 |
+| `<Space>yt` | Normal | 현재 심볼의 타입 문자열 복사 |
 | `<Space>rn` | Normal | 심볼 이름 변경 |
 | `<Space>ca` | Normal/Visual | 코드 액션 |
 | `<Space>bd` | Normal | 창은 유지하고 현재 버퍼만 닫기 |
