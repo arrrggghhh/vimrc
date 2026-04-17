@@ -31,10 +31,10 @@ return {
       end, "Previous hunk")
 
       map("n", "<leader>gs", gs.stage_hunk, "Stage hunk")
-      map("n", "<leader>gr", gs.reset_hunk, "Reset hunk")
+      map("n", "<leader>gr", gs.undo_stage_hunk, "Reset (unstage) hunk")
       map("v", "<leader>gs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Stage selection")
-      map("v", "<leader>gr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Reset selection")
-      map("n", "<leader>gu", gs.undo_stage_hunk, "Undo stage hunk")
+      map("n", "<leader>gu", gs.reset_hunk, "Undo hunk changes")
+      map("v", "<leader>gu", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Undo selection changes")
       map("n", "<leader>gp", gs.preview_hunk, "Preview hunk")
       map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, "Blame line")
       map("n", "<leader>gB", gs.toggle_current_line_blame, "Toggle inline blame")
