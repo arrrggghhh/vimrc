@@ -281,12 +281,12 @@ Visual 모드에서 범위를 선택한 뒤 사용하면 라인 범위가 포함
 
 ```
 <Space>gs    hunk 스테이징 (git add 부분 적용)
-<Space>gr    hunk 되돌리기 (변경 취소)
-<Space>gu    스테이징 취소
+<Space>gr    스테이징 취소 (git reset)
+<Space>gu    hunk 되돌리기 (변경 취소, undo)
 <Space>gp    hunk 미리보기 (팝업)
 ```
 
-Visual 모드에서 `<Space>gs`/`<Space>gr`을 사용하면 선택한 줄만 스테이징/되돌리기할
+Visual 모드에서 `<Space>gs`/`<Space>gu`를 사용하면 선택한 줄만 스테이징/되돌리기할
 수 있다.
 
 **Blame**
@@ -1021,8 +1021,8 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `<Space>?` | Normal | 버퍼 키맵 목록 (which-key) |
 | `]c` / `[c` | Normal | 다음/이전 git hunk |
 | `<Space>gs` | Normal/Visual | hunk 스테이징 |
-| `<Space>gr` | Normal/Visual | hunk 되돌리기 |
-| `<Space>gu` | Normal | 스테이징 취소 |
+| `<Space>gr` | Normal | 스테이징 취소 (reset) |
+| `<Space>gu` | Normal/Visual | hunk 되돌리기 (undo) |
 | `<Space>gp` | Normal | hunk 미리보기 |
 | `<Space>gb` | Normal | blame 팝업 |
 | `<Space>gB` | Normal | 인라인 blame 토글 |
