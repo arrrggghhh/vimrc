@@ -29,7 +29,7 @@ require("lazy").setup({
     { import = "plugins" },
   },
   install = {
-    colorscheme = { "neosolarized" },
+    colorscheme = { "kanagawa" },
   },
   checker = {
     enabled = true,

@@ -1,17 +1,13 @@
 return {
   {
-    "svrana/neosolarized.nvim",
+    "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 1000,
-    dependencies = {
-      "tjdevries/colorbuddy.nvim",
-    },
     config = function()
-      require("neosolarized").setup({
-        comment_italics = true,
-        background_set = true,
+      require("kanagawa").setup({
+        theme = "dragon",
       })
-      vim.cmd.colorscheme("neosolarized")
+      vim.cmd.colorscheme("kanagawa")
     end,
   },
   {
