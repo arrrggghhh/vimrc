@@ -57,9 +57,23 @@ local function prepare_other_window(source_buf, source_win, source_cursor)
   return target_win
 end
 
-local function open_lsp_item_in_other_window(item, source_buf, source_win, from, tagname)
+local function prepare_new_tab(source_buf, source_win, source_cursor)
+  if not vim.api.nvim_buf_is_valid(source_buf) then
+    return nil
+  end
+
+  if vim.api.nvim_win_is_valid(source_win) then
+    vim.api.nvim_set_current_win(source_win)
+    vim.api.nvim_win_set_cursor(source_win, source_cursor)
+  end
+
+  vim.cmd("tab split")
+  return vim.api.nvim_get_current_win()
+end
+
+local function open_lsp_item(item, source_buf, source_win, from, tagname, prepare_target)
   local source_cursor = { from[2], math.max(from[3] - 1, 0) }
-  local target_win = prepare_other_window(source_buf, source_win, source_cursor)
+  local target_win = prepare_target(source_buf, source_win, source_cursor)
   if not target_win then
     return
   end
@@ -76,6 +90,14 @@ local function open_lsp_item_in_other_window(item, source_buf, source_win, from,
   end)
 
   vim.api.nvim_set_current_win(target_win)
+end
+
+local function open_lsp_item_in_other_window(item, source_buf, source_win, from, tagname)
+  open_lsp_item(item, source_buf, source_win, from, tagname, prepare_other_window)
+end
+
+local function open_lsp_item_in_new_tab(item, source_buf, source_win, from, tagname)
+  open_lsp_item(item, source_buf, source_win, from, tagname, prepare_new_tab)
 end
 
 local function normalize_inline_whitespace(text)
@@ -219,7 +241,7 @@ function M.jump_in_current_window(jump)
   end
 end
 
-function M.jump_in_other_window(jump)
+local function jump_with_target(jump, open_lsp_item_at_target)
   return function()
     local source_buf = vim.api.nvim_get_current_buf()
     local source_win = vim.api.nvim_get_current_win()
@@ -231,7 +253,7 @@ function M.jump_in_other_window(jump)
     jump({
       on_list = function(options)
         if #options.items == 1 then
-          open_lsp_item_in_other_window(options.items[1], source_buf, source_win, from, tagname)
+          open_lsp_item_at_target(options.items[1], source_buf, source_win, from, tagname)
           return
         end
 
@@ -240,6 +262,14 @@ function M.jump_in_other_window(jump)
       end,
     })
   end
+end
+
+function M.jump_in_other_window(jump)
+  return jump_with_target(jump, open_lsp_item_in_other_window)
+end
+
+function M.jump_in_new_tab(jump)
+  return jump_with_target(jump, open_lsp_item_in_new_tab)
 end
 
 function M.goto_definition_in_other_window()
@@ -252,6 +282,24 @@ function M.goto_definition_in_other_window()
   local source_win = vim.api.nvim_get_current_win()
   local source_cursor = vim.api.nvim_win_get_cursor(source_win)
   local target_win = prepare_other_window(source_buf, source_win, source_cursor)
+  if not target_win then
+    return
+  end
+
+  vim.api.nvim_set_current_win(target_win)
+  vim.cmd("normal! gd")
+end
+
+function M.goto_definition_in_new_tab()
+  if next(vim.lsp.get_clients({ bufnr = 0, method = "textDocument/definition" })) ~= nil then
+    M.jump_in_new_tab(vim.lsp.buf.definition)()
+    return
+  end
+
+  local source_buf = vim.api.nvim_get_current_buf()
+  local source_win = vim.api.nvim_get_current_win()
+  local source_cursor = vim.api.nvim_win_get_cursor(source_win)
+  local target_win = prepare_new_tab(source_buf, source_win, source_cursor)
   if not target_win then
     return
   end

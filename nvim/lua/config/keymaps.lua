@@ -80,6 +80,7 @@ vim.api.nvim_create_user_command("BufOnlyVisible", delete_other_buffers_keep_vis
 map("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer", silent = true })
 map("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer", silent = true })
 map("n", "gd", lsp_navigation.goto_definition_in_other_window, { desc = "Go to definition in split", silent = true })
+map("n", "gzd", lsp_navigation.goto_definition_in_new_tab, { desc = "Go to definition in new tab", silent = true })
 map("n", "<leader>h", "<C-w>h", { desc = "Focus left window" })
 map("n", "<leader>j", "<C-w>j", { desc = "Focus lower window" })
 map("n", "<leader>k", "<C-w>k", { desc = "Focus upper window" })

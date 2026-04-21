@@ -431,6 +431,7 @@ S)          Visual 모드에서 선택한 텍스트를 ()로 감싸기
 
 ```
 gd    definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성, 여러 창이어도 현재 커서 기준으로 조회)
+gzd   definition을 새 탭에서 열기
 gD    definition을 현재 창에서 열기
 ```
 
@@ -438,6 +439,7 @@ gD    definition을 현재 창에서 열기
 
 ```
 gy    type definition을 다른 창에서 열기 (창이 하나면 세로 분할 생성, 여러 창이어도 현재 커서 기준으로 조회)
+gzt   type definition을 새 탭에서 열기
 gY    type definition을 현재 창에서 열기
 <Space>yt    현재 심볼의 타입 문자열을 unnamed register와 system clipboard에 복사
 ```
@@ -446,6 +448,7 @@ gY    type definition을 현재 창에서 열기
 
 ```
 gd    함수 정의를 다른 창에서 열기
+gzd   함수 정의를 새 탭에서 열기
 gD    함수 정의를 현재 창에서 열기
 K     함수 시그니처와 문서를 팝업으로 확인
 ```
@@ -999,10 +1002,12 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `<Space>e` | Normal | 파일 탐색기 열기/포커스 |
 | `<Space>fe` | Normal | 현재 파일 탐색기에서 찾기 |
 | `gd` | Normal | 정의를 다른 창에서 열기 |
+| `gzd` | Normal | 정의를 새 탭에서 열기 |
 | `gD` | Normal | 정의를 현재 창에서 열기 |
 | `gr` | Normal | 참조 목록 |
 | `K` | Normal | 호버 정보 (디버그 중에는 변수 런타임 값 표시) |
 | `gy` | Normal | 타입 정의를 다른 창에서 열기 |
+| `gzt` | Normal | 타입 정의를 새 탭에서 열기 |
 | `gY` | Normal | 타입 정의를 현재 창에서 열기 |
 | `<Space>yt` | Normal | 현재 심볼의 타입 문자열 복사 |
 | `<Space>rn` | Normal | 심볼 이름 변경 |

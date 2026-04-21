@@ -38,10 +38,12 @@ local function map_lsp_keys(bufnr)
   end
 
   map("n", "gd", lsp_navigation.jump_in_other_window(vim.lsp.buf.definition), "Go to definition in split")
+  map("n", "gzd", lsp_navigation.jump_in_new_tab(vim.lsp.buf.definition), "Go to definition in new tab")
   map("n", "gD", lsp_navigation.jump_in_current_window(vim.lsp.buf.definition), "Go to definition")
   map("n", "gr", vim.lsp.buf.references, "List references")
   map("n", "K", vim.lsp.buf.hover, "Hover")
   map("n", "gy", lsp_navigation.jump_in_other_window(vim.lsp.buf.type_definition), "Type definition in split")
+  map("n", "gzt", lsp_navigation.jump_in_new_tab(vim.lsp.buf.type_definition), "Type definition in new tab")
   map("n", "gY", lsp_navigation.jump_in_current_window(vim.lsp.buf.type_definition), "Type definition")
   map("n", "<leader>yt", lsp_navigation.copy_symbol_type, "Copy symbol type")
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
