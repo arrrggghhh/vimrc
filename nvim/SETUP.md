@@ -160,6 +160,7 @@ nvim
 | folke/persistence.nvim | 세션 자동 저장/복원 (디렉토리별, 필요 시 브랜치별 분리) |
 | stevearc/aerial.nvim | 코드/문서 아웃라인 (목차 사이드바) |
 | MeanderingProgrammer/render-markdown.nvim | 마크다운 버퍼 내 렌더링 |
+| numToStr/Comment.nvim | 코드 주석 토글 (`gcc`, `gc`, `gbc`, `gb`) |
 | kylechui/nvim-surround | 괄호/따옴표 등 감싸기 추가/변경/삭제 |
 | stevearc/conform.nvim | 포매터 통합 관리 (저장 시 자동 포맷) |
 | linux-cultist/venv-selector.nvim | Python 가상환경 선택 |
@@ -320,6 +321,45 @@ Visual 모드에서 `<Space>gs`/`<Space>gu`를 사용하면 선택한 줄만 스
 ]t              다음 TODO 주석으로 이동
 [t              이전 TODO 주석으로 이동
 <Space>ft       프로젝트 전체 TODO 검색 (telescope)
+```
+
+### 코드 주석 토글 (Comment.nvim)
+
+기본 설정으로 활성화되어 있으며 `commentstring`을 사용하는 파일타입에서는 별도 설정 없이
+라인 주석과 블록 주석을 토글할 수 있다.
+
+**기본 토글**
+
+```
+gcc             현재 줄 라인 주석 토글
+gbc             현재 줄 블록 주석 토글
+[count]gcc      현재 줄부터 count개 줄 라인 주석 토글
+[count]gbc      현재 줄부터 count개 줄 블록 주석 토글
+gc{motion}      motion 범위를 라인 주석 토글
+gb{motion}      motion 범위를 블록 주석 토글
+```
+
+Visual 모드에서 선택한 범위에도 바로 적용할 수 있다.
+
+```
+gc              선택 영역 라인 주석 토글
+gb              선택 영역 블록 주석 토글
+```
+
+**주석 줄 추가**
+
+```
+gco             현재 줄 아래에 주석 줄 추가 후 Insert 모드 진입
+gcO             현재 줄 위에 주석 줄 추가 후 Insert 모드 진입
+gcA             현재 줄 끝에 주석 추가 후 Insert 모드 진입
+```
+
+자주 쓰는 예시는 다음과 같다.
+
+```
+gcap            현재 문단 전체 라인 주석 토글
+gc2j            현재 줄 포함 아래 2줄 범위 라인 주석 토글
+gbaf            함수 전체 블록 주석 토글
 ```
 
 ## Go 소스코드 편집 가이드
