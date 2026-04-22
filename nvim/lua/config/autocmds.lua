@@ -39,6 +39,7 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "json",
   callback = function()
     vim.bo.formatprg = "jq ."
+    vim.bo.equalprg = "jq ."
   end,
 })
 
