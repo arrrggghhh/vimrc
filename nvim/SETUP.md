@@ -250,6 +250,33 @@ prefix 키를 누르고 잠시 기다렸을 때 사용 가능한 키맵 목록�
 
 팝업에서 다음 키를 누르면 해당 그룹의 하위 키맵이 표시된다.
 
+### 설정 자동 업데이트
+
+여러 컴퓨터에서 같은 vimrc 저장소를 공유할 때, 다른 컴퓨터에서 푸시한 변경사항을
+자동으로 받아오는 기능이다. nvim 시작 시 백그라운드에서 `git fetch`를 실행하고,
+워킹트리가 깨끗하면 `git merge --ff-only`로 fast-forward한 뒤 알림을 띄운다.
+
+- **저장소 경로**: `~/tools/vimrc` (고정)
+- **실행 시점**: `VimEnter` autocmd. 시작 시간에 영향 없음 (async)
+- **빈도 제한**: 1시간에 1회. stamp 파일 `~/.cache/nvim/vimrc-last-fetch`에 기록
+- **워킹트리 더러움 / fast-forward 불가**: merge 생략, 알림만 표시
+
+알림 예시:
+
+```
+vimrc 업데이트됨 (3 커밋), nvim 재시작 권장
+vimrc 업데이트 2개 있음 (워킹트리 변경사항 있어 자동 merge 생략)
+vimrc merge 실패 (fast-forward 불가, 수동 merge 필요)
+```
+
+수동으로 즉시 fetch하고 싶으면 stamp 파일을 지우고 nvim을 재시작한다.
+
+```sh
+rm ~/.cache/nvim/vimrc-last-fetch
+```
+
+구현은 `lua/config/auto_update.lua`에 있다.
+
 ### 파일 경로 복사
 
 현재 파일의 경로와 라인 번호(또는 선택 범위)를 시스템 클립보드에 복사한다.
