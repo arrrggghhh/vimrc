@@ -73,6 +73,7 @@ opt.hlsearch = true
 opt.ignorecase = true
 opt.mouse = "a"
 opt.number = true
+-- kept on so statuscolumn re-evaluates on cursor move; display is overridden below
 opt.relativenumber = true
 
 local function statuscol_num()
