@@ -74,6 +74,25 @@ opt.ignorecase = true
 opt.mouse = "a"
 opt.number = true
 opt.relativenumber = true
+
+local function statuscol_num()
+  if vim.v.virtnum ~= 0 then return "" end
+  local width = math.max(#tostring(vim.fn.line("$")), 3)
+  local text = string.format("%" .. width .. "d", vim.v.lnum)
+  if vim.v.relnum ~= 0 and vim.v.relnum % 10 == 0 then
+    return "%#LineNrMilestone#" .. text .. "%*"
+  end
+  return text
+end
+_G._statuscol_num = statuscol_num
+
+local function set_milestone_hl()
+  vim.api.nvim_set_hl(0, "LineNrMilestone", { link = "Special" })
+end
+set_milestone_hl()
+vim.api.nvim_create_autocmd("ColorScheme", { callback = set_milestone_hl })
+
+opt.statuscolumn = "%s%C%{%v:lua._statuscol_num()%} "
 opt.shiftwidth = 2
 opt.smartcase = true
 opt.smartindent = true
