@@ -35,6 +35,18 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
   command = "checktime",
 })
 
+vim.api.nvim_create_autocmd({ "TermOpen", "BufWinEnter" }, {
+  callback = function(args)
+    if vim.bo[args.buf].buftype ~= "terminal" then
+      return
+    end
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.statuscolumn = ""
+    vim.opt_local.signcolumn = "no"
+  end,
+})
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "json",
   callback = function()
