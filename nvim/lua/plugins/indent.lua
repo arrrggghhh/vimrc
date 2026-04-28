@@ -1,7 +1,7 @@
 return {
   "lukas-reineke/indent-blankline.nvim",
   main = "ibl",
-  ft = { "python" },
+  ft = { "python", "go" },
   opts = {
     enabled = false,
     scope = {
@@ -14,7 +14,7 @@ return {
     require("ibl").setup(opts)
 
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = "python",
+      pattern = { "python", "go" },
       callback = function(args)
         require("ibl").setup_buffer(args.buf, { enabled = true })
       end,
