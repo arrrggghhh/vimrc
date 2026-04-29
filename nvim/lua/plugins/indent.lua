@@ -4,13 +4,26 @@ return {
   ft = { "python", "go" },
   opts = {
     enabled = false,
+    indent = {
+      char = "╎",
+      highlight = "IblIndent",
+    },
     scope = {
+      char = "╎",
       enabled = true,
+      highlight = "IblScope",
       show_start = false,
       show_end = false,
     },
   },
   config = function(_, opts)
+    local hooks = require("ibl.hooks")
+
+    hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+      vim.api.nvim_set_hl(0, "IblIndent", { fg = "#4f4f63" })
+      vim.api.nvim_set_hl(0, "IblScope", { fg = "#60607a" })
+    end)
+
     require("ibl").setup(opts)
 
     vim.api.nvim_create_autocmd("FileType", {
