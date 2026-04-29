@@ -171,7 +171,7 @@ nvim
 | mfussenegger/nvim-dap-python | Python 디버깅 어댑터 (debugpy) |
 | lewis6991/gitsigns.nvim | git 변경 표시, hunk 탐색/스테이징, blame |
 | folke/which-key.nvim | 키맵 팝업 (기본 비활성, `<Space>k`로 토글) |
-| lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python 파일 전용) |
+| lukas-reineke/indent-blankline.nvim | 들여쓰기 가이드라인 (Python/Go 파일 전용) |
 | nvim-lualine/lualine.nvim | 상태바 (모드, git branch, diagnostics, 파일 정보) |
 | folke/todo-comments.nvim | TODO/FIXME/HACK 하이라이팅 및 검색 |
 | kevinhwang91/nvim-ufo | 모던 fold (treesitter 기반 접기/펼치기/미리보기) |
@@ -234,6 +234,25 @@ nvim main.py
 - **린팅**: ruff 린터가 코드 문제를 진단으로 표시
 - **들여쓰기**: Python 파일에서 스페이스 기반 들여쓰기 (`expandtab`, `tabstop=4`)
 - **가상환경**: `<Space>vs`로 venv/conda 환경 선택
+
+### 들여쓰기 가이드 색 조정
+
+들여쓰기 가이드는 `nvim/lua/plugins/indent.lua`에서 `ibl`(`indent-blankline.nvim`)로 설정한다.
+현재는 점선 문자 `╎`를 쓰고, highlight group은 다음 두 개를 사용한다.
+
+- `IblIndent`: 일반 들여쓰기 가이드 선
+- `IblScope`: 현재 scope에 해당하는 가이드 선
+
+색은 `hooks.register(hooks.type.HIGHLIGHT_SETUP, ...)` 안의 `vim.api.nvim_set_hl()`에서 조정한다.
+현재 값은 `kanagawa`의 `dragon` 같은 다크 테마에 맞춰 고정 hex 색으로 튜닝되어 있다.
+
+테마를 바꾼 뒤 들여쓰기 선이 너무 진하거나 너무 흐리면 이 두 값을 다시 조정한다.
+
+- 다크 테마: 배경에 더 가까운 더 어두운 색으로 내리면 선이 덜 튄다.
+- 라이트 테마: 현재 값이 너무 흐릴 수 있으므로 더 진한 색으로 올려야 한다.
+- 일반적으로 `IblScope`는 `IblIndent`보다 약간 더 눈에 띄게 두는 편이 보기 좋다.
+
+조정 후에는 Python 또는 Go 파일을 다시 열어 실제 버퍼에서 확인한다.
 
 ## 공통 기능 가이드
 
