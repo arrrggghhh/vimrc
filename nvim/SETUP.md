@@ -25,8 +25,17 @@ brew install --cask font-d2coding-nerd-font
 ### 3. 필수 도구 설치
 
 ```sh
-brew install neovim go tree-sitter-cli ripgrep python3
+brew install neovim go tree-sitter-cli ripgrep python3 node fd jq lazygit
 ```
+
+현재 Treesitter 설정에는 Neovim 0.12 이상과 tree-sitter CLI 0.26.1 이상이 필요하다.
+`node`는 pyright 실행, `fd`는 가상환경 검색, `jq`는 JSON 포맷팅,
+`lazygit`은 `<Space>tg`에 사용한다.
+
+Homebrew가 현재 macOS/CPU용 바이너리를 제공하지 않으면 각 프로젝트의 공식
+release에서 해당 아키텍처 배포본을 받아 사용할 수 있다. 버전별 파일은
+`~/.local/opt/`에 두고 실행 파일을 `~/.local/bin/`에 링크한 뒤, 이 경로가
+기존 설치 경로보다 PATH에서 앞서는지 `command -v nvim tree-sitter rg fd jq lazygit`으로 확인한다.
 
 Go 도구는 go install로 설치한다.
 
@@ -60,8 +69,18 @@ ln -s ~/tools/vimrc/nvim ~/.config/nvim
 
 ```sh
 sudo apt update
-sudo apt install -y git curl build-essential python3 python3-pip python3-venv
+sudo apt install -y git curl build-essential python3 python3-pip python3-venv nodejs npm ripgrep fd-find jq
 ```
+
+Ubuntu의 `fd-find`는 실행 파일명이 `fdfind`다. `fd`가 없는 경우 다음 링크를 추가한다.
+
+```sh
+mkdir -p ~/.local/bin
+command -v fd >/dev/null || ln -s "$(command -v fdfind)" ~/.local/bin/fd
+```
+
+`~/.local/bin`을 PATH 앞에 추가한다. `<Space>tg`를 사용하려면
+[lazygit 공식 설치 안내](https://github.com/jesseduffield/lazygit#installation)도 따른다.
 
 ### 2. Neovim 설치
 
@@ -77,7 +96,7 @@ rm nvim-linux-x86_64.tar.gz
 셸 설정(`~/.bashrc` 또는 `~/.zshrc`)에 PATH를 추가한다.
 
 ```sh
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$HOME/.local/bin:/opt/nvim-linux-x86_64/bin:$PATH"
 ```
 
 ### 3. Go 설치 (g 버전 매니저)
@@ -95,11 +114,12 @@ source ~/.bashrc
 alias g='~/.g/bin/g'
 ```
 
-설치 가능한 stable 버전을 확인하고 원하는 버전을 설치한다.
+설치 가능한 stable 버전을 확인하고 원하는 버전을 설치한다. 아래 버전 번호는 예시이므로
+`g ls-remote stable`에 표시되는 최신 stable 버전으로 바꾼다.
 
 ```sh
 g ls-remote stable
-g install 1.24.2
+g install 1.27.1
 ```
 
 Go 도구를 설치한다.
@@ -111,9 +131,15 @@ go install golang.org/x/tools/cmd/goimports@latest
 
 ### 4. tree-sitter CLI 설치
 
+현재 nvim-treesitter는 npm 설치를 지원 경로로 권장하지 않는다.
+다음은 공식 Linux x86_64 배포본을 사용하는 예시다 (ARM64는 해당 아키텍처 배포본 사용).
+
 ```sh
-sudo apt install -y npm
-sudo npm install -g tree-sitter-cli
+curl -fLO https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz
+gzip -d tree-sitter-linux-x64.gz
+install -m 755 tree-sitter-linux-x64 ~/.local/bin/tree-sitter
+rm tree-sitter-linux-x64
+tree-sitter --version
 ```
 
 ### 5. 설정 파일 배치
@@ -136,11 +162,13 @@ Neovim을 처음 실행하면 lazy.nvim이 자동으로 부트스트랩되고 �
 nvim
 ```
 
-설치 완료 후 `:Lazy` 명령으로 플러그인이 모두 로드되었는지 확인한다.
+설치 완료 후 `:Lazy` 명령으로 설치 오류가 없는지 확인한다. 파일타입·키 입력·이벤트에
+따라 지연 로드되는 플러그인은 시작 직후 `Not Loaded`여도 정상이다.
 
 | 플러그인 | 역할 |
 |---------|------|
 | folke/lazy.nvim | 플러그인 매니저 |
+| rebelot/kanagawa.nvim | Kanagawa Dragon 색상 테마 |
 | folke/flash.nvim | 화면 내 빠른 점프 (easymotion) |
 | neovim/nvim-lspconfig | LSP 클라이언트 설정 |
 | mason-org/mason.nvim | LSP/도구 설치 관리 |
@@ -148,6 +176,7 @@ nvim
 | hrsh7th/nvim-cmp | 자동완성 엔진 |
 | hrsh7th/cmp-nvim-lsp | LSP 자동완성 소스 |
 | hrsh7th/cmp-buffer | 버퍼 단어 자동완성 소스 |
+| windwp/nvim-autopairs | 괄호/따옴표 자동 닫기, 자동완성과 연동 |
 | nvim-telescope/telescope.nvim | fuzzy finder (파일, 심볼, 텍스트 검색) |
 | nvim-telescope/telescope-fzf-native.nvim | telescope용 fzf 정렬 알고리즘 (C) |
 | nvim-lua/plenary.nvim | telescope 의존 라이브러리 |
@@ -180,7 +209,9 @@ nvim
 ### Mason으로 LSP/도구 확인
 
 Mason이 LSP 서버를 자동 설치하도록 설정되어 있다 (`ensure_installed = { "gopls", "pyright", "ruff" }`).
-시스템에 이미 해당 도구가 있으면 그대로 사용되고, 없으면 Mason이 설치한다.
+시스템 설치 여부와 별개로 Mason 설치를 관리한다. 현재 설정은 Mason의 `gopls`와
+`goimports`를 우선 사용하고, 없으면 PATH의 실행 파일을 사용한다. Mason의 `bin`
+디렉토리도 Neovim 내부 PATH 앞에 추가되므로 pyright, ruff, delve 역시 Mason 설치가 우선한다.
 
 goimports, delve(Go 디버거), debugpy(Python 디버거)는 자동 설치 대상이 아니므로 수동 설치한다.
 
@@ -200,6 +231,21 @@ tree-sitter CLI가 설치되어 있으면 첫 실행 시 Go 관련 파서가 자
 ```
 
 go, gomod, gosum, gotmpl, json, lua, markdown, markdown_inline, python, query, toml, vim, vimdoc 파서가 있어야 한다.
+
+### 패키지 업데이트
+
+Homebrew로 설치한 도구는 `brew update` 후 필요한 패키지를 지정해 `brew upgrade`한다.
+`g`나 `nvm`을 사용하는 경우 Homebrew 설치보다 먼저 선택될 수 있으므로
+`command -v go node python3`와 각 도구의 버전도 확인한다.
+
+Neovim 안에서는 다음 순서로 업데이트한다.
+
+1. `:Lazy update`: 플러그인과 `lazy-lock.json` 업데이트
+2. `:MasonUpdate`: 패키지 레지스트리 업데이트 (설치된 도구 업데이트와는 별개)
+3. `:Mason`: 업데이트 가능한 설치 패키지를 선택해 `u`로 업데이트
+4. `:TSUpdate`: 설치된 Treesitter 파서 업데이트
+
+업데이트 후 Neovim을 재시작하고 `:checkhealth`와 Go/Python 저장 시 포맷팅을 확인한다.
 
 ### 동작 확인 (Go)
 
@@ -229,7 +275,7 @@ nvim main.py
 
 - **LSP**: `gd`(정의 이동), `gr`(참조 찾기), `K`(호버) 동작 확인
 - **자동완성**: Insert 모드에서 `.` 입력 시 완성 목록 표시
-- **Format on save**: `:w` 시 ruff가 자동 적용 (import 정리 + 포맷)
+- **Format on save**: `:w` 시 ruff가 자동 적용 (활성 린트 규칙의 자동 수정 + 포맷)
 - **Treesitter**: 구문 하이라이팅 적용 확인
 - **린팅**: ruff 린터가 코드 문제를 진단으로 표시
 - **들여쓰기**: Python 파일에서 스페이스 기반 들여쓰기 (`expandtab`, `tabstop=4`)
@@ -328,7 +374,7 @@ Visual 모드에서 범위를 선택한 뒤 사용하면 라인 범위가 포함
 
 ```
 <Space>gs    hunk 스테이징 (git add 부분 적용)
-<Space>gr    스테이징 취소 (git reset)
+<Space>gr    gitsigns의 직전 stage_hunk 호출 취소
 <Space>gu    hunk 되돌리기 (변경 취소, undo)
 <Space>gp    hunk 미리보기 (팝업)
 ```
@@ -405,8 +451,11 @@ gcA             현재 줄 끝에 주석 추가 후 Insert 모드 진입
 ```
 gcap            현재 문단 전체 라인 주석 토글
 gc2j            현재 줄 포함 아래 2줄 범위 라인 주석 토글
-gbaf            함수 전체 블록 주석 토글
+gbip            현재 문단 전체 블록 주석 토글 (블록 주석 지원 파일타입)
 ```
+
+`af` 함수 text object는 현재 설정에 없으므로 `gbaf`는 사용하지 않는다.
+함수 범위를 Visual 모드로 선택한 뒤 `gc` 또는 `gb`를 사용할 수 있다.
 
 ## Go 소스코드 편집 가이드
 
@@ -420,10 +469,16 @@ easymotion과 같은 역할. 화면에 보이는 아무 위치로 빠르게 이�
 
 ```
 s + {검색 문자} + {라벨}    해당 위치로 점프
-S                           treesitter 노드 단위로 선택 (함수, 블록 등)
+S                           Normal/Operator-pending 모드에서 treesitter 노드 선택
 ```
 
-`d`, `c`, `y` 같은 operator와 조합할 수도 있다. 예: `ds{검색}{라벨}`로 커서부터 해당 위치까지 삭제.
+Operator-pending 모드의 `s`는 Flash 점프로 동작하지만, Normal 모드의 `ds`와 `cs`는
+nvim-surround 단축키다. 따라서 `ds{검색}{라벨}`를 Flash 삭제 명령으로 쓰지 않는다.
+Visual 모드에서 `s`로 범위를 확장한 뒤 `d`로 삭제하거나 `c`로 변경할 수 있다.
+
+Visual 모드의 `S`는 Flash와 nvim-surround가 모두 등록한다. 현재 `VeryLazy` 로드 후에는
+nvim-surround가 적용된다. 로드 순서에 따라 달라질 수 있으므로 필요하면
+`:verbose xmap S`로 확인한다.
 
 ### 감싸기 편집 (nvim-surround)
 
@@ -453,7 +508,7 @@ ysiw)       hello → (hello)
 ```
 cs"'        "hello" → 'hello'
 cs)]        (hello) → [hello]
-cs"<div>    "hello" → <div>hello</div>
+cs"t        태그 입력창에 div를 입력하고 Enter: "hello" → <div>hello</div>
 ```
 
 **삭제** — `ds{char}`
@@ -536,10 +591,13 @@ Tab으로 다음 placeholder 위치로 이동할 수 있다.
 
 ```
 Enter    파일 열기 / 디렉토리 열기·접기
+o        파일을 열 창 선택 (선택 가능한 창이 여러 개일 때)
+E        커서 아래 디렉토리를 두 단계 펼치기 (사용자 정의)
 a        새 파일 또는 디렉토리 생성 (이름 끝에 /를 붙이면 디렉토리)
 r        이름 변경
 d        삭제
-x        상위 디렉토리 접기
+x        잘라내기 표시 (이동 대상 디렉토리에서 p로 붙여넣기)
+Backspace 상위 디렉토리로 이동하며 접기
 q        트리 닫기 (<Space>e로 다시 열기)
 ```
 
@@ -578,11 +636,13 @@ VS Code의 Command Palette(`Cmd+P`)처럼 파일명, 심볼, 텍스트를 fuzzy 
 **검색창 안에서 조작**
 
 ```
-Ctrl+n / Ctrl+p    다음/이전 항목 선택
+Ctrl+n / Ctrl+p    Insert 모드에서 다음/이전 항목 선택
+j / k              Normal 모드에서 다음/이전 항목 선택
 Enter              선택한 항목 열기
 Ctrl+x             선택한 항목을 수평 분할로 열기
 Ctrl+v             선택한 항목을 수직 분할로 열기
-Esc                검색 닫기
+Ctrl+c             Insert 모드에서 검색 닫기
+Esc                Insert → Normal 모드 전환, Normal 모드에서 누르면 검색 닫기
 ```
 
 ### 창 분할
@@ -608,11 +668,13 @@ Ctrl+l    오른쪽 창으로
 **창 크기 조정** — smart-splits 플러그인:
 
 ```
-Alt+h     왼쪽으로 줄이기
-Alt+j     아래로 늘리기
-Alt+k     위로 늘리기
-Alt+l     오른쪽으로 늘리기
+Alt+h     왼쪽 방향으로 경계 조정
+Alt+j     아래 방향으로 경계 조정
+Alt+k     위 방향으로 경계 조정
+Alt+l     오른쪽 방향으로 경계 조정
 ```
+
+현재 창이 커지거나 작아지는 방향은 창 배치와 조정할 수 있는 경계에 따라 달라진다.
 
 **창 최대화 토글** — 현재 창을 최대화하거나 이전 레이아웃으로 복원한다.
 
@@ -722,14 +784,17 @@ Python은 두 개의 LSP 서버가 동시에 동작한다.
 
 저장(`:w`) 시 conform.nvim이 ruff를 실행하여 자동 포맷팅한다.
 
-1. **ruff fix** — 자동 수정 가능한 린트 이슈 해결, import 정리
+1. **ruff check --fix** — 활성화된 린트 규칙 중 자동 수정 가능한 이슈 해결
 2. **ruff format** — 코드 포맷팅 (black 호환 스타일)
+
+미사용 import 제거 등은 린트 규칙에 따라 적용된다. import 정렬은 기본 보장이 아니며,
+프로젝트 Ruff 설정에서 `I` 규칙을 활성화해야 한다.
 
 `:ConformInfo`로 현재 파일에 적용되는 포매터 상태를 확인할 수 있다.
 
 ### 가상환경 (venv-selector.nvim)
 
-pyright가 올바른 패키지를 인식하려면 프로젝트의 가상환경을 선택해야 한다.
+pyright의 자동 탐지가 원하는 환경을 선택하지 못하면 프로젝트의 가상환경을 직접 선택한다.
 
 ```
 <Space>vs    가상환경 목록을 telescope로 검색하여 선택
@@ -768,6 +833,8 @@ F10          step over (다음 줄)
 <Space>dr    재시작
 <Space>dt    종료
 <Space>df    현재 실행 위치로 커서 이동
+<Space>dj    콜스택에서 하위 프레임으로 이동
+<Space>dk    콜스택에서 상위 프레임으로 이동
 <Space>du    DAP UI 토글
 <Space>dT    커서 위치의 테스트 함수 디버깅 (Go: delve, Python: debugpy)
 ```
@@ -789,7 +856,8 @@ F10          step over (다음 줄)
 
 - debug 모드: 해당 경로에 `package main`과 `main()` 함수가 필요하다
 - test 모드: `go test`로 실행되므로 `main()` 없이 `Test*` 함수가 실행된다
-- 1번은 프로젝트 루트(`go.mod` 위치)에 `debug/main.go`를 만들어 디버깅 진입점으로 사용한다
+- 1번의 `${workspaceFolder}`는 Neovim의 현재 작업 디렉토리(`:pwd`)다.
+  프로젝트 루트에서 Neovim을 열고 `debug/main.go`를 디버깅 진입점으로 사용한다.
 
 ### 실행 구성 (Python)
 
@@ -797,10 +865,10 @@ Python 파일에서 `<Space>dc`로 디버깅을 시작하면 아래 목록에서
 
 | # | 이름 | 대상 |
 |---|------|------|
-| 1 | Launch file | 현재 파일 |
-| 2 | Launch file with arguments | 현재 파일 + args 입력 |
-| 3 | Attach remote | 실행 중인 debugpy 서버에 연결 |
-| 4 | Run doctests in file | 현재 파일의 doctest 실행 |
+| 1 | file | 현재 파일 |
+| 2 | file:args | 현재 파일 + args 입력 |
+| 3 | attach | 실행 중인 debugpy 서버에 연결 |
+| 4 | file:doctest | 현재 파일의 doctest 실행 |
 
 - debugpy는 Mason으로 설치한다 (`:MasonInstall debugpy`)
 - 프로젝트의 가상환경을 사용하려면 venv-selector (`<Space>vs`)로 먼저 선택한다
@@ -810,7 +878,7 @@ Python 파일에서 `<Space>dc`로 디버깅을 시작하면 아래 목록에서
 1. 디버깅할 코드에서 `<Space>db`로 브레이크포인트를 설정한다
 2. `<Space>dc`로 디버깅을 시작하고 실행 구성을 선택한다
    - 테스트 함수를 디버깅하려면 커서를 테스트 함수 안에 놓고 `<Space>dT`를 누른다
-3. 브레이크포인트에서 멈추면 DAP UI가 자동으로 열린다
+3. 디버그 어댑터 초기화 시 DAP UI가 자동으로 열리고, 브레이크포인트에서 멈추면 값을 확인한다
 4. `<Space>di`/`<Space>do`/`<Space>dO`로 코드를 한 줄씩 실행한다
 5. DAP UI에서 변수 값, 콜스택, 브레이크포인트 목록을 확인한다
 6. `<Space>dt`로 디버깅을 종료하면 DAP UI가 자동으로 닫힌다
@@ -828,15 +896,16 @@ Python 파일에서 `<Space>dc`로 디버깅을 시작하면 아래 목록에서
 
 ### 변수 검사 (hover eval)
 
-디버그 세션 중에는 `K`가 LSP 호버 대신 DAP eval로 전환된다. 커서 아래 변수의
-런타임 값을 float 창으로 표시한다. 디버깅이 종료되면 `K`는 LSP 호버로 자동 복귀한다.
+현재 DAP 설정은 전역 `K`를 eval로 등록하지만, Go/Python의 LSP는 버퍼별 `K`를 등록한다.
+버퍼별 키맵이 우선하므로 LSP가 연결된 파일에서 Normal 모드의 `K`는 디버깅 중에도
+LSP 호버다. 런타임 값을 확실하게 확인하려면 다음 명령을 사용한다.
 
-```
-K           변수의 런타임 값을 float 창으로 표시 (디버그 세션 중)
-K (한 번 더) float 창 안으로 커서 이동 (중첩 속성 탐색/복사 가능)
+```vim
+:lua require("dapui").eval()
 ```
 
-Visual 모드에서 표현식을 선택한 뒤 `K`를 누르면 해당 표현식을 평가한다.
+디버깅 중 Visual 모드에서 표현식을 선택한 뒤 `K`를 누르면 해당 표현식을 평가한다.
+버퍼별 `K`가 없는 파일에서는 Normal 모드의 `K`도 eval로 동작한다.
 
 Watches 패널에서는 `i`로 감시할 표현식을 추가하고, `d`로 삭제한다. 매 스텝마다
 등록된 표현식의 값이 자동 갱신된다.
@@ -848,7 +917,8 @@ VS Code의 통합 터미널처럼 Neovim 안에서 터미널을 열고 닫을 �
 **터미널 열기/닫기**
 
 ```
-F12           active 터미널 토글 (기본 대상: 1번)
+F12           active 터미널 토글 (기본 대상: 1번 vertical)
+Ctrl+`        F12와 동일 (터미널 앱의 키 전달 지원 필요)
 <Space>ta     F12가 가리킬 active 터미널 지정
 <Space>tf     float 터미널 (화면 중앙에 떠 있는 창)
 <Space>th     horizontal 터미널 (하단 분할)
@@ -870,8 +940,11 @@ float은 빠르게 명령 하나 실행하고 닫을 때, horizontal은 코드�
 F12           active 터미널 닫기/다시 열기
 Ctrl+\ Ctrl+n 터미널 입력 모드 → Neovim Normal 모드
 i 또는 a      Normal 모드로 빠져나온 뒤 다시 터미널 입력 모드로 진입
-Ctrl+h/j/k/l  터미널에서 다른 창으로 이동
+Ctrl+\ Ctrl+n 후 Ctrl+h/j/k/l  Normal 모드로 전환한 뒤 다른 창으로 이동
 ```
+
+Terminal 모드에는 `Ctrl+h/j/k/l` 창 이동 키맵이 없으므로 바로 누르면 터미널 안의
+프로그램에 전달된다. UI 시작 시 1번 vertical과 2번 float 터미널을 미리 준비한다.
 
 Normal 모드로 전환하면 터미널 출력을 Vim 방식으로 스크롤하거나 텍스트를 복사할 수
 있다.
@@ -929,7 +1002,8 @@ Git 저장소에서는 브랜치명도 함께 반영된다. 단, `main`과 `mast
 디렉토리 세션을 그대로 사용하며, 그 외 브랜치에서는 같은 디렉토리여도 브랜치별
 세션 파일이 따로 저장된다.
 
-**저장**: 종료 시 버퍼가 2개 이상이면 `Save session?` 확인을 묻는다.
+**저장**: 종료 시 이름 있는 일반 파일 버퍼가 2개 이상이면 `Save session?` 확인을 묻는다.
+터미널·도움말·이름 없는 버퍼와 gitcommit/gitrebase 버퍼는 이 개수에서 제외한다.
 Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 버퍼가 1개 이하면 확인 없이 저장을 건너뛴다.
 버퍼 목록, 윈도우 레이아웃, 탭, 커서 위치가 포함된다.
@@ -944,8 +1018,10 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 <Space>ss    세션 수동 저장
 ```
 
-**제한사항**: 터미널(toggleterm) 상태는 복원되지 않는다. Neovim의 `mksession`
-자체 한계이므로 터미널은 복원 후 다시 열어야 한다.
+**제한사항**: 현재 `sessionoptions`에는 `terminal`이 포함되어 있어 Neovim은 복원 가능한
+터미널 명령을 다시 실행할 수 있다. 실행 중이던 프로세스·셸 내부 상태를 그대로 복원하는
+것은 아니며, toggleterm의 active 번호·인스턴스 연결까지 보장하지 않는다.
+필요하면 복원 후 터미널을 다시 연다.
 
 **활용 예시**
 
@@ -963,7 +1039,7 @@ Yes를 선택하면 저장, No면 저장하지 않고 종료한다.
 섹션으로 빠르게 이동할 수 있다. Go 코드에서도 함수/타입 목록으로 사용 가능하다.
 
 ```
-<Space>o     아웃라인 사이드바 토글
+<Space>o     아웃라인 열기 / 포커스 이동 / 아웃라인 안에서 누르면 닫기
 ```
 
 사이드바 안에서 조작:
@@ -1006,7 +1082,8 @@ ggVG=        파일 전체를 jq로 포맷팅 (visual select 후 =)
 ```
 
 Visual 모드로 범위를 선택한 뒤 `gq` 또는 `=`를 누르면 선택한 부분만 포맷팅할
-수도 있다.
+수도 있다. 선택 범위 자체가 완전한 JSON 값이어야 하며, 객체 중간의 속성 몇 줄처럼
+불완전한 JSON 조각은 `jq`가 처리하지 못한다.
 
 `=`의 기본 동작인 `indentexpr` 기반 들여쓰기 재계산은 수천 줄 규모의 JSON에서
 매우 느려 에디터가 멈춘 것처럼 보일 수 있다. `equalprg`를 `jq .`로 지정해
@@ -1020,7 +1097,8 @@ treesitter 파서가 설치된 파일에서 객체/배열/함수 단위로 부�
 
 기본 동작:
 
-- 파일을 열면 모든 fold가 **펼쳐진 상태**로 시작한다 (`foldlevelstart=99`).
+- 기본 foldlevel은 99지만, 첫 표시 때 `imports`·`comment` 종류의 fold는 자동으로 접는다.
+  JSON은 대신 `array` 종류를 자동으로 접는다. 전부 펼치려면 `zR`을 누른다.
 - fold 컬럼은 표시하지 않는다 (`foldcolumn=0`). 접힌 영역은 ufo의 인라인
   placeholder로 표시된다.
 - fold 위에서 `zK`를 누르면 접힌 내용을 팝업으로 미리보기 할 수 있고, 팝업
@@ -1042,7 +1120,7 @@ zK           접힌 내용 미리보기 팝업    (ufo.peekFoldedLinesUnderCurso
 `:set foldlevel=N`을 직접 사용한다. (예: `:set foldlevel=1`은 최상위 fold만
 남기고 모두 접음. `:set foldlevel=99`로 전부 펼침.)
 
-JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_ft.json = {"array"}`로
+JSON의 접을 수 있는 배열은 첫 표시 때 접히도록 `close_fold_kinds_for_ft.json = {"array"}`로
 설정되어 있다. 전체를 펼치려면 `zR`.
 
 ## 주요 키맵 요약
@@ -1050,14 +1128,15 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | 키 | 모드 | 동작 |
 |----|------|------|
 | `<Space>w` | Normal | 저장 |
-| `<Space>q` | Normal | 종료 |
+| `<Space>q` | Normal | 현재 창 종료 (마지막 창이면 Neovim 종료) |
 | `<Space>e` | Normal | 파일 탐색기 열기/포커스 |
 | `<Space>fe` | Normal | 현재 파일 탐색기에서 찾기 |
 | `gd` | Normal | 정의를 다른 창에서 열기 |
 | `gzd` | Normal | 정의를 새 탭에서 열기 |
 | `gD` | Normal | 정의를 현재 창에서 열기 |
 | `gr` | Normal | 참조 목록 |
-| `K` | Normal | 호버 정보 (디버그 중에는 변수 런타임 값 표시) |
+| `K` | Normal | LSP 호버 (디버깅 중에도 버퍼별 LSP 키맵 우선) |
+| `K` | Visual | 디버깅 중 선택한 표현식 DAP eval |
 | `gy` | Normal | 타입 정의를 다른 창에서 열기 |
 | `gzt` | Normal | 타입 정의를 새 탭에서 열기 |
 | `gY` | Normal | 타입 정의를 현재 창에서 열기 |
@@ -1070,6 +1149,7 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `Ctrl+h/j/k/l` | Normal | 분할 창 이동 |
 | `Alt+h/j/k/l` | Normal | 분할 창 리사이즈 |
 | `Ctrl+w =` | Normal | 창 크기 균등화 |
+| `Ctrl+w m` | Normal | 현재 창 최대화 / 이전 크기로 복원 |
 | `Ctrl+w s` / `Ctrl+w v` | Normal | 수평/수직 분할 |
 | `Ctrl+w c` | Normal | 현재 창 닫기 |
 | `Ctrl+o` / `Ctrl+i` | Normal | 이전/다음 위치로 이동 |
@@ -1080,15 +1160,17 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `<Space>fS` | Normal | 워크스페이스 심볼 검색 |
 | `<Space>fd` | Normal | 진단 목록 |
 | `<Space>fr` | Normal | 마지막 검색 재개 |
-| `<Space>o` | Normal | 아웃라인 사이드바 토글 |
+| `<Space>o` | Normal | 아웃라인 열기/포커스, 아웃라인 안에서는 닫기 |
 | `<Space>m` | Normal | 마크다운 렌더링 토글 |
 | `s` | Normal/Visual/Operator | flash 점프 (easymotion) |
-| `S` | Normal/Visual/Operator | flash treesitter 선택 |
+| `S` | Normal/Operator | flash treesitter 선택 |
 | `ys{motion}{char}` | Normal | 감싸기 추가 (surround) |
 | `cs{old}{new}` | Normal | 감싸기 변경 |
 | `ds{char}` | Normal | 감싸기 삭제 |
-| `S{char}` | Visual | 선택 영역 감싸기 |
-| `Ctrl+\`` | Normal/Terminal | 터미널 토글 |
+| `S{char}` | Visual | 선택 영역 감싸기 (Flash와 충돌 주의: 본문 참조) |
+| `F12` | Normal/Terminal | active 터미널 토글 |
+| ``Ctrl+` `` | Normal/Terminal | active 터미널 토글 (키 전달 지원 필요) |
+| `<Space>ta` | Normal | count 번호를 active 터미널로 지정 |
 | `<Space>tf` | Normal | float 터미널 |
 | `<Space>th` | Normal | horizontal 터미널 |
 | `<Space>tv` | Normal | vertical 터미널 |
@@ -1112,13 +1194,14 @@ JSON의 긴 배열은 파일을 열자마자 접히도록 `close_fold_kinds_for_
 | `<Space>dr` | Normal | 디버깅 재시작 |
 | `<Space>dt` | Normal | 디버깅 종료 |
 | `<Space>df` | Normal | 현재 실행 위치로 커서 이동 |
+| `<Space>dj` / `<Space>dk` | Normal | 콜스택 하위/상위 프레임 이동 |
 | `<Space>du` | Normal | DAP UI 토글 |
 | `<Space>dT` | Normal | 커서 위치 테스트 함수 디버깅 |
 | `<Space>k` | Normal | which-key 토글 (기본 OFF) |
 | `<Space>?` | Normal | 버퍼 키맵 목록 (which-key) |
 | `]c` / `[c` | Normal | 다음/이전 git hunk |
 | `<Space>gs` | Normal/Visual | hunk 스테이징 |
-| `<Space>gr` | Normal | 스테이징 취소 (reset) |
+| `<Space>gr` | Normal | gitsigns의 직전 stage_hunk 호출 취소 |
 | `<Space>gu` | Normal/Visual | hunk 되돌리기 (undo) |
 | `<Space>gp` | Normal | hunk 미리보기 |
 | `<Space>gb` | Normal | blame 팝업 |
