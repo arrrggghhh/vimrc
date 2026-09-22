@@ -7,7 +7,7 @@ return {
       require("kanagawa").setup({
         theme = "dragon",
       })
-      vim.cmd.colorscheme("kanagawa")
+      vim.cmd.colorscheme("kanagawa-dragon")
     end,
   },
   {
