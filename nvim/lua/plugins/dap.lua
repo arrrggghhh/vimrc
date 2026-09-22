@@ -54,14 +54,15 @@ return {
           dapui.eval()
         end, { desc = "DAP eval" })
       end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
+      local function close_debug_ui()
         dapui.close()
-        vim.keymap.del({ "n", "v" }, "K")
+        for _, mode in ipairs({ "n", "v" }) do
+          pcall(vim.keymap.del, mode, "K")
+        end
       end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close()
-        vim.keymap.del({ "n", "v" }, "K")
-      end
+
+      dap.listeners.before.event_terminated["dapui_config"] = close_debug_ui
+      dap.listeners.before.event_exited["dapui_config"] = close_debug_ui
     end,
   },
 }
